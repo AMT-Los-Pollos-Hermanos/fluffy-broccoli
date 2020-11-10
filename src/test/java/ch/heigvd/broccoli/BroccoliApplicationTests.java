@@ -1,10 +1,10 @@
-package ch.heigvd.gamify;
+package ch.heigvd.broccoli;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class GamifyApplicationTests {
+class BroccoliApplicationTests {
 
 	@Test
 	void contextLoads() {
