@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Api(tags = "Badges", description = "Gestion des badges")
+@Api(tags = "Badges")
 @ApiResponses({
         @ApiResponse(code = 400, message = "Bad request"),
         @ApiResponse(code = 401, message = "Unauthorized"),
@@ -28,13 +28,13 @@ class BadgeController {
         this.assembler = assembler;
     }
 
-    @ApiOperation("Tous les badges")
+    @ApiOperation("Get all badges")
     @GetMapping(value = "/badges", produces = "application/hal+json")
     CollectionModel<EntityModel<Badge>> all() {
         return assembler.toCollectionModel(repository.findAll());
     }
 
-    @ApiOperation("Un seul badge")
+    @ApiOperation("Get only one badge")
     @ApiResponses({
             @ApiResponse(code = 404, message = "Not Found"),
     })
@@ -44,7 +44,7 @@ class BadgeController {
         return assembler.toModel(badge);
     }
 
-    @ApiOperation("Nouveau badge")
+    @ApiOperation("Add a new badge")
     @PostMapping(value = "/badges", consumes = "application/json", produces = "application/hal+json")
     @ResponseStatus(HttpStatus.CREATED)
     ResponseEntity<EntityModel<Badge>> newBadge(@RequestBody Badge badge) {
@@ -52,18 +52,18 @@ class BadgeController {
         return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
     }
 
-    @ApiOperation("Mise à jour d'un badge")
+    @ApiOperation("Update a badge")
     @PutMapping(value = "/badges/{id}", consumes = "application/json", produces = "application/hal+json")
     ResponseEntity<EntityModel<Badge>> update(@RequestBody Badge newBadge, @PathVariable Long id) {
         Badge updateBadge = repository.findById(id)
-                // Si on trouve un badge avec l'ID, on le met à jour
+                // If we didn't find the badge, we update it
                 .map(badge -> {
                     badge.setName(newBadge.getName());
                     badge.setDescription(newBadge.getDescription());
                     badge.setIcon(newBadge.getIcon());
                     return repository.save(badge);
                 })
-                // Sinon, on le crée avec l'ID spécifié
+                // Else we create it with the specified id
                 .orElseGet(() -> {
                     newBadge.setId(id);
                     return repository.save(newBadge);
@@ -72,7 +72,7 @@ class BadgeController {
         return ResponseEntity.ok(entityModel);
     }
 
-    @ApiOperation("Suppression d'un badge")
+    @ApiOperation("Delete a badge")
     @ApiResponses({
             @ApiResponse(code = 404, message = "Not Found"),
     })

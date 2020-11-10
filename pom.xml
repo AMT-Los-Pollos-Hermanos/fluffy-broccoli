@@ -11,7 +11,7 @@
     <groupId>ch.heigvd</groupId>
     <artifactId>broccoli</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Fluffy broccoli</name>
+    <name>Fluffy Broccoli</name>
     <description>An API to gamify everything</description>
 
     <properties>

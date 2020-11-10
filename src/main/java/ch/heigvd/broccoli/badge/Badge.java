@@ -18,13 +18,13 @@ public class Badge {
     @ApiModelProperty(example = "1", position = 1)
     private long id;
 
-    @ApiModelProperty(example = "Mon super badge", position = 2)
+    @ApiModelProperty(example = "My amazing badge", position = 2)
     private String name;
 
-    @ApiModelProperty(example = "Super badge obtenu après 50 commentaires sur notre site", position = 3)
+    @ApiModelProperty(example = "You can get this badge after 50 comments", position = 3)
     private String description;
 
-    @ApiModelProperty(example = "/dossier/des/images/icon.png", position = 4)
+    @ApiModelProperty(example = "/images/icon.png", position = 4)
     private String icon;
 
 }
