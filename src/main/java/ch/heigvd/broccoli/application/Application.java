@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.util.UUID;
 
@@ -18,11 +17,9 @@ import java.util.UUID;
 public class Application {
 
     @Id
-    @GeneratedValue
-    private long id;
+    private UUID apiKey;
 
     private String name;
 
-    private UUID apiKey;
 
 }

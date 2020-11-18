@@ -1,11 +1,13 @@
 package ch.heigvd.broccoli.badge;
 
+import ch.heigvd.broccoli.application.Application;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,6 +46,11 @@ class BadgeController {
     @PostMapping(value = "/badges", consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     Badge newBadge(@RequestBody Badge badge) {
+        Application app = (Application) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(app == null) {
+            throw new RuntimeException("No auth principal found");
+        }
+        badge.setApplication(app);
         return repository.save(badge);
     }
 
