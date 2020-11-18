@@ -21,16 +21,16 @@ public class BroccoliApplication {
     @Bean
     CommandLineRunner initDatabase(BadgeRepository repository) {
         return args -> {
-            log.info("Preloading " + repository.save(Badge.builder()
-                    .name("Mon premier badge")
-                    .description("La description du premier badge")
-                    .icon("/image/truc/badge1.png")
-                    .build()));
-            log.info("Preloading " + repository.save(Badge.builder()
-                    .name("Mon deuxième badge")
-                    .description("La description du deuxième badge")
-                    .icon("/image/truc/badge2.png")
-                    .build()));
+//            log.info("Preloading " + repository.save(Badge.builder()
+//                    .name("Mon premier badge")
+//                    .description("La description du premier badge")
+//                    .icon("/image/truc/badge1.png")
+//                    .build()));
+//            log.info("Preloading " + repository.save(Badge.builder()
+//                    .name("Mon deuxième badge")
+//                    .description("La description du deuxième badge")
+//                    .icon("/image/truc/badge2.png")
+//                    .build()));
         };
     }
 

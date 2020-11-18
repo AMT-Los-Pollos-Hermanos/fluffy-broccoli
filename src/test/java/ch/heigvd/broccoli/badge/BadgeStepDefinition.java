@@ -12,8 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -32,12 +31,12 @@ public class BadgeStepDefinition {
 
     @Then("^the client receives status code of (\\d+)$")
     public void the_client_receives_status_code_of(int statusCode) throws Throwable {
-        action.andExpect(status().isOk());
+        action.andExpect(status().is(statusCode));
     }
 
     @And("^the client receives an array of badges$")
     public void the_client_receives_server_version_body() throws Throwable {
-        action.andExpect(jsonPath("_embedded", Matchers.hasKey("badgeList")));
+        action.andExpect(content().string("[]"));
     }
 
 }

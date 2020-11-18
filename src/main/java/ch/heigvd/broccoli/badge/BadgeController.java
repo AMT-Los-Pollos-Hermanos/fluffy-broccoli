@@ -1,15 +1,16 @@
 package ch.heigvd.broccoli.badge;
 
+import ch.heigvd.broccoli.application.Application;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "Badges")
 @ApiResponses({
@@ -21,40 +22,41 @@ import org.springframework.web.bind.annotation.*;
 class BadgeController {
 
     private final BadgeRepository repository;
-    private final BadgeModelAssembler assembler;
 
-    BadgeController(BadgeRepository repository, BadgeModelAssembler assembler) {
+    BadgeController(BadgeRepository repository) {
         this.repository = repository;
-        this.assembler = assembler;
     }
 
     @ApiOperation("Get all badges")
-    @GetMapping(value = "/badges", produces = "application/hal+json")
-    CollectionModel<EntityModel<Badge>> all() {
-        return assembler.toCollectionModel(repository.findAll());
+    @GetMapping(value = "/badges", produces = "application/json")
+    List<Badge> all() {
+        return repository.findAll();
     }
 
     @ApiOperation("Get only one badge")
     @ApiResponses({
             @ApiResponse(code = 404, message = "Not Found"),
     })
-    @GetMapping(value = "/badges/{id}", produces = "application/hal+json")
-    EntityModel<Badge> one(@PathVariable Long id) {
-        Badge badge = repository.findById(id).orElseThrow(() -> new BadgeNotFoundException(id));
-        return assembler.toModel(badge);
+    @GetMapping(value = "/badges/{id}", produces = "application/json")
+    Badge one(@PathVariable Long id) {
+        return repository.findById(id).orElseThrow(() -> new BadgeNotFoundException(id));
     }
 
     @ApiOperation("Add a new badge")
-    @PostMapping(value = "/badges", consumes = "application/json", produces = "application/hal+json")
+    @PostMapping(value = "/badges", consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    ResponseEntity<EntityModel<Badge>> newBadge(@RequestBody Badge badge) {
-        EntityModel<Badge> entityModel = assembler.toModel(repository.save(badge));
-        return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
+    Badge newBadge(@RequestBody Badge badge) {
+        Application app = (Application) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(app == null) {
+            throw new RuntimeException("No auth principal found");
+        }
+        badge.setApplication(app);
+        return repository.save(badge);
     }
 
     @ApiOperation("Update a badge")
-    @PutMapping(value = "/badges/{id}", consumes = "application/json", produces = "application/hal+json")
-    ResponseEntity<EntityModel<Badge>> update(@RequestBody Badge newBadge, @PathVariable Long id) {
+    @PutMapping(value = "/badges/{id}", consumes = "application/json", produces = "application/json")
+    ResponseEntity<Badge> update(@RequestBody Badge newBadge, @PathVariable Long id) {
         Badge updateBadge = repository.findById(id)
                 // If we didn't find the badge, we update it
                 .map(badge -> {
@@ -68,8 +70,7 @@ class BadgeController {
                     newBadge.setId(id);
                     return repository.save(newBadge);
                 });
-        EntityModel<Badge> entityModel = assembler.toModel(updateBadge);
-        return ResponseEntity.ok(entityModel);
+        return ResponseEntity.ok(updateBadge);
     }
 
     @ApiOperation("Delete a badge")
