@@ -40,8 +40,8 @@ class BadgeController {
     })
     @GetMapping(value = "/badges/{id}", produces = "application/json")
     Badge one(@PathVariable Long id) {
-        // TODO check badge if it's own by current app before getting it
-        return repository.findById(id).orElseThrow(() -> new BadgeNotFoundException(id));
+        Badge badge = repository.findById(id).orElseThrow(() -> new BadgeNotFoundException(id));
+        return authorizedBadge(badge);
     }
 
     @ApiOperation("Add a new badge")
@@ -59,10 +59,10 @@ class BadgeController {
     @ApiOperation("Update a badge")
     @PutMapping(value = "/badges/{id}", consumes = "application/json", produces = "application/json")
     ResponseEntity<Badge> update(@RequestBody Badge newBadge, @PathVariable Long id) {
-        // TODO check badge if it's own by current app before updating it
         Badge updateBadge = repository.findById(id)
                 // If we didn't find the badge, we update it
                 .map(badge -> {
+                    authorizedBadge(badge);
                     badge.setName(newBadge.getName());
                     badge.setDescription(newBadge.getDescription());
                     badge.setIcon(newBadge.getIcon());
@@ -83,13 +83,21 @@ class BadgeController {
     @DeleteMapping(value = "/badges/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     ResponseEntity<?> delete(@PathVariable Long id) {
-        // TODO check badge if it's own by current app before deleting it
         repository.findById(id).map(badge -> {
+            authorizedBadge(badge);
             repository.delete(badge);
             return badge;
         }).orElseThrow(() -> new BadgeNotFoundException(id));
         return ResponseEntity.noContent().build();
     }
 
-
+    // check badge if it's own by current app before getting it
+    private Badge authorizedBadge(Badge badge){
+        Application app = (Application) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(badge.getApplication().getApiKey().compareTo(app.getApiKey()) == 0){
+            return badge;
+        }else{
+            throw new BadgeNotAuthorizedException(badge.getId(), app.getApiKey());
+        }
+    }
 }
