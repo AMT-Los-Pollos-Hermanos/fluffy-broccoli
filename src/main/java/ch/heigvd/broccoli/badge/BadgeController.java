@@ -30,7 +30,8 @@ class BadgeController {
     @ApiOperation("Get all badges")
     @GetMapping(value = "/badges", produces = "application/json")
     List<Badge> all() {
-        return repository.findAll();
+        Application app = (Application) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return repository.findAllByApplication(app);
     }
 
     @ApiOperation("Get only one badge")
@@ -39,6 +40,7 @@ class BadgeController {
     })
     @GetMapping(value = "/badges/{id}", produces = "application/json")
     Badge one(@PathVariable Long id) {
+        // TODO check badge if it's own by current app before getting it
         return repository.findById(id).orElseThrow(() -> new BadgeNotFoundException(id));
     }
 
@@ -47,7 +49,7 @@ class BadgeController {
     @ResponseStatus(HttpStatus.CREATED)
     Badge newBadge(@RequestBody Badge badge) {
         Application app = (Application) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(app == null) {
+        if (app == null) {
             throw new RuntimeException("No auth principal found");
         }
         badge.setApplication(app);
@@ -57,6 +59,7 @@ class BadgeController {
     @ApiOperation("Update a badge")
     @PutMapping(value = "/badges/{id}", consumes = "application/json", produces = "application/json")
     ResponseEntity<Badge> update(@RequestBody Badge newBadge, @PathVariable Long id) {
+        // TODO check badge if it's own by current app before updating it
         Badge updateBadge = repository.findById(id)
                 // If we didn't find the badge, we update it
                 .map(badge -> {
@@ -80,6 +83,7 @@ class BadgeController {
     @DeleteMapping(value = "/badges/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     ResponseEntity<?> delete(@PathVariable Long id) {
+        // TODO check badge if it's own by current app before deleting it
         repository.findById(id).map(badge -> {
             repository.delete(badge);
             return badge;
