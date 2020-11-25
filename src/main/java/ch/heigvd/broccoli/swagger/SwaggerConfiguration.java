@@ -41,7 +41,7 @@ public class SwaggerConfiguration {
     }
 
     private SecurityScheme securityScheme() {
-        return new ApiKey("X-API-KEY", "api_key", "header");
+        return new ApiKey("X-API-KEY", "X-API-KEY", "header");
     }
 
     private SecurityContext securityContext() {

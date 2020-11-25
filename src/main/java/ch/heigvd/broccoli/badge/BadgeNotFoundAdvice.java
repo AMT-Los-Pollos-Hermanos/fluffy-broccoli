@@ -14,4 +14,9 @@ class BadgeNotFoundAdvice {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.TEXT_PLAIN).body(e.getMessage());
     }
 
+    @ExceptionHandler(BadgeNotAuthorizedException.class)
+    ResponseEntity<?> BadgeNotAuthorizedHandler(BadgeNotAuthorizedException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).contentType(MediaType.TEXT_PLAIN).body(e.getMessage());
+    }
+
 }

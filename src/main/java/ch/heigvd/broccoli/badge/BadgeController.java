@@ -30,7 +30,8 @@ class BadgeController {
     @ApiOperation("Get all badges")
     @GetMapping(value = "/badges", produces = "application/json")
     List<Badge> all() {
-        return repository.findAll();
+        Application app = (Application) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return repository.findAllByApplication(app);
     }
 
     @ApiOperation("Get only one badge")
@@ -39,7 +40,8 @@ class BadgeController {
     })
     @GetMapping(value = "/badges/{id}", produces = "application/json")
     Badge one(@PathVariable Long id) {
-        return repository.findById(id).orElseThrow(() -> new BadgeNotFoundException(id));
+        Badge badge = repository.findById(id).orElseThrow(() -> new BadgeNotFoundException(id));
+        return authorizedBadge(badge);
     }
 
     @ApiOperation("Add a new badge")
@@ -47,7 +49,7 @@ class BadgeController {
     @ResponseStatus(HttpStatus.CREATED)
     Badge newBadge(@RequestBody Badge badge) {
         Application app = (Application) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(app == null) {
+        if (app == null) {
             throw new RuntimeException("No auth principal found");
         }
         badge.setApplication(app);
@@ -60,6 +62,7 @@ class BadgeController {
         Badge updateBadge = repository.findById(id)
                 // If we didn't find the badge, we update it
                 .map(badge -> {
+                    authorizedBadge(badge);
                     badge.setName(newBadge.getName());
                     badge.setDescription(newBadge.getDescription());
                     badge.setIcon(newBadge.getIcon());
@@ -81,11 +84,20 @@ class BadgeController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     ResponseEntity<?> delete(@PathVariable Long id) {
         repository.findById(id).map(badge -> {
+            authorizedBadge(badge);
             repository.delete(badge);
             return badge;
         }).orElseThrow(() -> new BadgeNotFoundException(id));
         return ResponseEntity.noContent().build();
     }
 
-
+    // check badge if it's own by current app before getting it
+    private Badge authorizedBadge(Badge badge){
+        Application app = (Application) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(badge.getApplication().getApiKey().compareTo(app.getApiKey()) == 0){
+            return badge;
+        }else{
+            throw new BadgeNotAuthorizedException(badge.getId(), app.getApiKey());
+        }
+    }
 }

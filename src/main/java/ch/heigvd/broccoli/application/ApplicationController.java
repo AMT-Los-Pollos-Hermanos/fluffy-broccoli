@@ -20,4 +20,5 @@ public class ApplicationController {
         return repository.save(Application.builder().name(name).apiKey(UUID.randomUUID()).build());
     }
 
+
 }
