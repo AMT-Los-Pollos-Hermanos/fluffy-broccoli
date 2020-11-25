@@ -29,9 +29,9 @@ class BadgeController {
 
     @ApiOperation("Get all badges")
     @GetMapping(value = "/badges", produces = "application/json")
-    List<Badge> all() {
+    List<BadgeDTO> all() {
         Application app = (Application) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return repository.findAllByApplication(app);
+        return BadgeService.getListDTOFromBadges(repository.findAllByApplication(app));
     }
 
     @ApiOperation("Get only one badge")
@@ -39,26 +39,28 @@ class BadgeController {
             @ApiResponse(code = 404, message = "Not Found"),
     })
     @GetMapping(value = "/badges/{id}", produces = "application/json")
-    Badge one(@PathVariable Long id) {
+    BadgeDTO one(@PathVariable Long id) {
         Badge badge = repository.findById(id).orElseThrow(() -> new BadgeNotFoundException(id));
-        return authorizedBadge(badge);
+        return BadgeService.getBadgeDTOFromBadge(authorizedBadge(badge));
     }
 
     @ApiOperation("Add a new badge")
     @PostMapping(value = "/badges", consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    Badge newBadge(@RequestBody Badge badge) {
+    BadgeDTO newBadge(@RequestBody BadgeDTO badgeDTO) {
         Application app = (Application) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (app == null) {
             throw new RuntimeException("No auth principal found");
         }
+        Badge badge = BadgeService.getBadgeFromDTO(badgeDTO);
         badge.setApplication(app);
-        return repository.save(badge);
+        repository.save(badge);
+        return badgeDTO;
     }
 
     @ApiOperation("Update a badge")
     @PutMapping(value = "/badges/{id}", consumes = "application/json", produces = "application/json")
-    ResponseEntity<Badge> update(@RequestBody Badge newBadge, @PathVariable Long id) {
+    ResponseEntity<BadgeDTO> update(@RequestBody BadgeDTO newBadge, @PathVariable Long id) {
         Badge updateBadge = repository.findById(id)
                 // If we didn't find the badge, we update it
                 .map(badge -> {
@@ -71,9 +73,9 @@ class BadgeController {
                 // Else we create it with the specified id
                 .orElseGet(() -> {
                     newBadge.setId(id);
-                    return repository.save(newBadge);
+                    return repository.save(BadgeService.getBadgeFromDTO(newBadge));
                 });
-        return ResponseEntity.ok(updateBadge);
+        return ResponseEntity.ok(BadgeService.getBadgeDTOFromBadge(updateBadge));
     }
 
     @ApiOperation("Delete a badge")
