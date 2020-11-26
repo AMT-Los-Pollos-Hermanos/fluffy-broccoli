@@ -88,7 +88,7 @@ class BadgeController {
         repository.findById(id).map(badge -> {
             authorizedBadge(badge);
             repository.delete(badge);
-            return badge;
+            return BadgeService.getBadgeDTOFromBadge(badge);
         }).orElseThrow(() -> new BadgeNotFoundException(id));
         return ResponseEntity.noContent().build();
     }

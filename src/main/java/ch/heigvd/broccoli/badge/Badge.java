@@ -14,7 +14,8 @@ import javax.persistence.ManyToOne;
 @Entity
 @Data
 @Builder
-
+@NoArgsConstructor
+@AllArgsConstructor
 public class Badge {
 
     @Id @GeneratedValue
