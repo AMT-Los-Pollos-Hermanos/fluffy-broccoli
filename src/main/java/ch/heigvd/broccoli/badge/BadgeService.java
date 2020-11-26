@@ -27,4 +27,13 @@ class BadgeService {
         badges.forEach(badge -> badgesDTO.add(getBadgeDTOFromBadge(badge)));
         return badgesDTO;
     }
+    // check badge if it's own by current app before getting it
+    static Badge authorizedBadge(Badge badge){
+        Application app = (Application) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(badge.getApplication().getApiKey().compareTo(app.getApiKey()) == 0){
+            return badge;
+        }else{
+            throw new BadgeNotAuthorizedException(badge.getId(), app.getApiKey());
+        }
+    }
 }
