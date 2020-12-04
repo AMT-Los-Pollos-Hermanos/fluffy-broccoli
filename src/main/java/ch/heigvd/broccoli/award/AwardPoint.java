@@ -7,6 +7,6 @@ public class AwardPoint implements Award {
 
     @Override
     public void apply() {
-
+        // TODO implement
     }
 }
