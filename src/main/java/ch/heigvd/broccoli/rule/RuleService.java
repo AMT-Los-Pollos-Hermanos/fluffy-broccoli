@@ -1,11 +1,13 @@
 package ch.heigvd.broccoli.rule;
 
 import ch.heigvd.broccoli.application.Application;
+import ch.heigvd.broccoli.award.Award;
 import ch.heigvd.broccoli.event.EventDTO;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -19,10 +21,29 @@ public class RuleService {
     }
 
     public void process(EventDTO event) {
+        boolean isPropertiesMatching;
         List<Rule> rules = repository.findAllByApplication((Application) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        // For each rules
         for (Rule r : rules) {
-            if(r.getRuleIf().getType().equals(event.getType())) {
-                // Do something
+            // Type must match
+            if (r.getRuleIf().getType().equals(event.getType())) {
+
+                // For each properties
+                isPropertiesMatching = true;
+                for (Map.Entry<String, String> property : r.getRuleIf().getProperties().entrySet()) {
+                    // Property must match
+                    if (!event.getProperties().containsKey(property.getKey()) || !event.getProperties().containsValue(property.getValue())) {
+                        isPropertiesMatching = false;
+                        break;
+                    }
+                }
+
+                // Then, give award
+                if (isPropertiesMatching) {
+                    for (Award award : r.getRuleThen().getAwards()) {
+                        award.apply();
+                    }
+                }
             }
         }
     }

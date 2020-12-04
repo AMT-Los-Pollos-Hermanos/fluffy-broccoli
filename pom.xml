@@ -93,6 +93,11 @@
             <version>6.8.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-web-api</artifactId>
+            <version>8.0.1</version>
+        </dependency>
         <!-- End Cucumber -->
     </dependencies>
 
