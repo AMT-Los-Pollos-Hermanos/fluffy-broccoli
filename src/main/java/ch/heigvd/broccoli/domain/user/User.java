@@ -1,8 +1,8 @@
-package ch.heigvd.broccoli.domain.pointscale;
+package ch.heigvd.broccoli.domain.user;
 
 import ch.heigvd.broccoli.domain.application.Application;
+import ch.heigvd.broccoli.domain.badge.Badge;
 import ch.heigvd.broccoli.domain.userpointscale.UserPointScale;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,16 +14,24 @@ import java.util.List;
 @Entity
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class PointScale {
+@AllArgsConstructor
+public class User {
 
     @Id @GeneratedValue
-    @ApiModelProperty(example = "1", position = 1)
     private long id;
+
+    private String firstname;
+
+    private String lastname;
+
+    private String username;
 
     @ManyToOne
     private Application application;
+
+    @ManyToMany
+    private List<Badge> badges;
 
     @OneToMany
     private List<UserPointScale> userPointScales;
