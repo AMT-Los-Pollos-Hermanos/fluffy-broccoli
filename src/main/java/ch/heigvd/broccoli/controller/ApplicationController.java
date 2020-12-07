@@ -1,4 +1,4 @@
-package ch.heigvd.broccoli.application.application;
+package ch.heigvd.broccoli.controller;
 
 import ch.heigvd.broccoli.domain.application.Application;
 import ch.heigvd.broccoli.domain.application.ApplicationRepository;
