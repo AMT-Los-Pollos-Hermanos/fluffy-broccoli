@@ -10,7 +10,7 @@ public interface ServiceInterface<D, E> {
 
     D one(Long id);
 
-    D add(D id);
+    D add(D entity);
 
     D update(Long id, D entity);
 

@@ -1,39 +1,82 @@
 package ch.heigvd.broccoli.badge;
 
+import ch.heigvd.broccoli.ServiceInterface;
 import ch.heigvd.broccoli.application.Application;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
-class BadgeService {
-    static Badge getBadgeFromDTO(BadgeDTO badgeDTO){
-        return new Badge(badgeDTO.getId(),
-                badgeDTO.getName(),
-                badgeDTO.getDescription(),
-                badgeDTO.getIcon(),
-                (Application) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+class BadgeService implements ServiceInterface<BadgeDTO, Badge> {
+
+    private final BadgeRepository repository;
+
+    BadgeService(BadgeRepository repository) {
+        this.repository = repository;
     }
-    static BadgeDTO getBadgeDTOFromBadge(Badge badge){
-        return new BadgeDTO(badge.getId(),
-                badge.getName(),
-                badge.getDescription(),
-                badge.getIcon());
+
+    @Override
+    public List<BadgeDTO> all() {
+        return toDTO(repository.findAllByApplication(app()));
     }
-    static List<BadgeDTO> getListDTOFromBadges(List<Badge> badges){
-        List<BadgeDTO> badgesDTO = new ArrayList<>();
-        badges.forEach(badge -> badgesDTO.add(getBadgeDTOFromBadge(badge)));
-        return badgesDTO;
+
+    @Override
+    public BadgeDTO one(Long id) {
+        return toDTO(repository.findByIdAndApplication(id, app()));
     }
-    // check badge if it's own by current app before getting it
-    static Badge authorizedBadge(Badge badge){
-        Application app = (Application) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(badge.getApplication().getApiKey().compareTo(app.getApiKey()) == 0){
+
+    private BadgeDTO toDTO(Optional<Badge> badge) {
+        return badge.map(this::toDTO).orElse(null);
+    }
+
+    @Override
+    public BadgeDTO add(BadgeDTO badgeDTO) {
+        return toDTO(repository.save(Badge.builder()
+                .name(badgeDTO.getName())
+                .description(badgeDTO.getDescription())
+                .icon(badgeDTO.getIcon())
+                .application(app())
+                .build()));
+    }
+
+    @Override
+    public BadgeDTO update(Long id, BadgeDTO badgeDTO) {
+        return toDTO(repository.findByIdAndApplication(id, app()).map(badge -> {
+            badge.setName(badgeDTO.getName());
+            badge.setDescription(badgeDTO.getDescription());
+            badge.setIcon(badgeDTO.getIcon());
+            return repository.save(badge);
+        }).orElseThrow(() -> new BadgeNotFoundException(id)));
+    }
+
+    @Override
+    public BadgeDTO delete(Long id) {
+        return toDTO(repository.findByIdAndApplication(id, app()).map(badge -> {
+            repository.delete(badge);
             return badge;
-        }else{
-            throw new BadgeNotAuthorizedException(badge.getId(), app.getApiKey());
-        }
+        }).orElseThrow(() -> new BadgeNotFoundException(id)));
     }
+
+    @Override
+    public BadgeDTO toDTO(Badge badge) {
+        return BadgeDTO.builder()
+                .id(badge.getId())
+                .name(badge.getName())
+                .description(badge.getDescription())
+                .icon(badge.getIcon())
+                .build();
+    }
+
+    public List<BadgeDTO> toDTO(List<Badge> badges) {
+        return badges.stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Application app() {
+        return (Application) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
 }
