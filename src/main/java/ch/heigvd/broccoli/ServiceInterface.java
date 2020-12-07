@@ -1,6 +1,6 @@
 package ch.heigvd.broccoli;
 
-import ch.heigvd.broccoli.application.Application;
+import ch.heigvd.broccoli.domain.application.Application;
 
 import java.util.List;
 

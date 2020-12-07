@@ -1,6 +1,6 @@
 package ch.heigvd.broccoli.security;
 
-import ch.heigvd.broccoli.application.ApplicationRepository;
+import ch.heigvd.broccoli.domain.application.ApplicationRepository;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.BadCredentialsException;
