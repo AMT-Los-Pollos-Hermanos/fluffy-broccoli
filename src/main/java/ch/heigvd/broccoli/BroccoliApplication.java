@@ -1,7 +1,7 @@
 package ch.heigvd.broccoli;
 
-import ch.heigvd.broccoli.application.Application;
-import ch.heigvd.broccoli.application.ApplicationRepository;
+import ch.heigvd.broccoli.domain.application.Application;
+import ch.heigvd.broccoli.domain.application.ApplicationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;

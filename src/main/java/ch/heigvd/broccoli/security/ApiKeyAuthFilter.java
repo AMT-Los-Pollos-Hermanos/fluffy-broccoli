@@ -1,6 +1,6 @@
 package ch.heigvd.broccoli.security;
 
-import ch.heigvd.broccoli.application.ApplicationRepository;
+import ch.heigvd.broccoli.domain.application.ApplicationRepository;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
 import javax.servlet.http.HttpServletRequest;
