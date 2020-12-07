@@ -1,13 +1,15 @@
 package ch.heigvd.broccoli;
 
-import ch.heigvd.broccoli.badge.Badge;
-import ch.heigvd.broccoli.badge.BadgeRepository;
+import ch.heigvd.broccoli.application.Application;
+import ch.heigvd.broccoli.application.ApplicationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+
+import java.util.UUID;
 
 @SpringBootApplication
 public class BroccoliApplication {
@@ -19,18 +21,12 @@ public class BroccoliApplication {
     }
 
     @Bean
-    CommandLineRunner initDatabase(BadgeRepository repository) {
+    CommandLineRunner initDatabase(ApplicationRepository repository) {
         return args -> {
-//            log.info("Preloading " + repository.save(Badge.builder()
-//                    .name("Mon premier badge")
-//                    .description("La description du premier badge")
-//                    .icon("/image/truc/badge1.png")
-//                    .build()));
-//            log.info("Preloading " + repository.save(Badge.builder()
-//                    .name("Mon deuxième badge")
-//                    .description("La description du deuxième badge")
-//                    .icon("/image/truc/badge2.png")
-//                    .build()));
+            log.info("Preloading " + repository.save(Application.builder()
+                    .name("My test app")
+                    .apiKey(UUID.fromString("88980fa7-7167-46d5-bbe7-367a204b7bd2"))
+                    .build()));
         };
     }
 

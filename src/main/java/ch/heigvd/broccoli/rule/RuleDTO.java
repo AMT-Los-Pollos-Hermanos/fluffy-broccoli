@@ -10,6 +10,8 @@ import lombok.Data;
 @Builder
 public class RuleDTO {
 
+    private Long id;
+
     @JsonProperty("if")
     private RuleIf ruleIf;
 

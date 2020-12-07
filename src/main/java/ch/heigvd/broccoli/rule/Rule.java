@@ -2,17 +2,16 @@ package ch.heigvd.broccoli.rule;
 
 import ch.heigvd.broccoli.application.Application;
 import ch.heigvd.broccoli.rule.specification.RuleIf;
+import ch.heigvd.broccoli.rule.specification.RuleIfConverter;
 import ch.heigvd.broccoli.rule.specification.RuleThen;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import ch.heigvd.broccoli.rule.specification.RuleThenConverter;
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity
 @Data
@@ -25,13 +24,14 @@ public class Rule {
     @GeneratedValue
     private long id;
 
-    @JsonProperty("if")
+    @Convert(converter = RuleIfConverter.class)
     private RuleIf ruleIf;
 
-    @JsonProperty("then")
+    @Convert(converter = RuleThenConverter.class)
     private RuleThen ruleThen;
 
     @ManyToOne
+    @NotNull
     private Application application;
 
 }

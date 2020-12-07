@@ -1,9 +1,6 @@
 package ch.heigvd.broccoli.rule;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,8 +24,18 @@ public class RuleController {
     }
 
     @PostMapping("/rules")
-    public RuleDTO add(RuleDTO entityDto) {
-        return service.add(entityDto);
+    public RuleDTO add(@RequestBody RuleDTO rule) {
+        return service.add(rule);
+    }
+
+    @PutMapping("/rules/{id}")
+    public RuleDTO update(@PathVariable Long id, @RequestBody RuleDTO rule) {
+        return service.update(id, rule);
+    }
+
+    @DeleteMapping("/rules/{id}")
+    public RuleDTO update(@PathVariable Long id) {
+        return service.delete(id);
     }
 
 }
