@@ -1,16 +1,24 @@
 package ch.heigvd.broccoli.application.badge;
-
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.cucumber.spring.CucumberContextConfiguration;
+import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
+import net.minidev.json.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.io.UnsupportedEncodingException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -20,12 +28,13 @@ public class BadgeStepDefinition {
 
     @Autowired
     private MockMvc mvc;
-
+    MvcResult result;
     ResultActions action;
+    String appName = "test";
 
-    @When("^the client calls /badges$")
-    public void the_client_issues_GET_badges() throws Throwable {
-        action = mvc.perform(get("/badges"));
+    @When("the client get {string}")
+    public void theClientCalls(String path) throws Exception {
+        action = mvc.perform(get(path));
     }
 
     @Then("^the client receives status code of (\\d+)$")
@@ -38,5 +47,24 @@ public class BadgeStepDefinition {
         action.andExpect(content().string("[]"));
     }
 
+    /* Application */
+    @And("^the client receives an API-KEY$")
+    public void the_client_receives_API_KEY() throws UnsupportedEncodingException, ParseException {
+        result = action.andReturn();
+        JSONParser parser = new JSONParser();
+        JSONObject json = (JSONObject) parser.parse(result.getResponse().getContentAsString());
+        assertEquals(appName, json.getAsString("name"));
+    }
+
+    @When("^the client posts /applications$")
+    public void the_client_POST_applications() throws Throwable{
+        action = mvc.perform(post("/applications?name="+appName));
+    }
+
+
+    @Given("There is an application server")
+    public void thereIsAnApplicationServer() {
+
+    }
 }
 
