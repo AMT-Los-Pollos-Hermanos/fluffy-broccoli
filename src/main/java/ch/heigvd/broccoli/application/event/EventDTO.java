@@ -11,6 +11,6 @@ public class EventDTO {
 
     private String type;
     private Map<String, String> properties;
-    private long userId;
+    private Long userId;
 
 }
