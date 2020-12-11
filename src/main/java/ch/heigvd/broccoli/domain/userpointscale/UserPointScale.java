@@ -17,6 +17,7 @@ import java.sql.Timestamp;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+// TODO Rename UserReceivePoint
 public class UserPointScale {
 
     @Id

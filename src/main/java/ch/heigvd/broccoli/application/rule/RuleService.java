@@ -19,33 +19,7 @@ public class RuleService extends BaseService<RuleDTO, Rule> {
         this.repository = repository;
     }
 
-    public void process(EventDTO event) {
-        boolean isPropertiesMatching;
-        List<Rule> rules = repository.findAllByApplication((Application) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        // For each rules
-        for (Rule r : rules) {
-            // Type must match
-            if (r.getRuleIf().getType().equals(event.getType())) {
 
-                // For each properties
-                isPropertiesMatching = true;
-                for (Map.Entry<String, String> property : r.getRuleIf().getProperties().entrySet()) {
-                    // Property must match
-                    if (!event.getProperties().containsKey(property.getKey()) || !event.getProperties().containsValue(property.getValue())) {
-                        isPropertiesMatching = false;
-                        break;
-                    }
-                }
-
-                // Then, give award
-                if (isPropertiesMatching) {
-                    for (Award award : r.getRuleThen().getAwards()) {
-                        award.apply();
-                    }
-                }
-            }
-        }
-    }
 
     public RuleDTO add(RuleDTO ruleDTO) {
         return toDTO(repository.save(Rule.builder()
