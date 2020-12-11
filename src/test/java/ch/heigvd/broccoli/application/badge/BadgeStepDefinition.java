@@ -10,11 +10,15 @@ import net.minidev.json.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.remoting.httpinvoker.HttpInvokerRequestExecutor;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.http.HttpHeaders;
+import java.net.http.HttpRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -30,10 +34,17 @@ public class BadgeStepDefinition {
     private MockMvc mvc;
     MvcResult result;
     ResultActions action;
+    String path = "/applications?name=";
     String appName = "test";
+    String apiKey = "";
 
     @When("the client get {string}")
     public void theClientCalls(String path) throws Exception {
+        action = mvc.perform(get(path));
+    }
+
+    @When("the client get {string} with API-KEY")
+    public void theClientGetWithAPIKEY(String path) throws Exception {
         action = mvc.perform(get(path));
     }
 
@@ -47,6 +58,13 @@ public class BadgeStepDefinition {
         action.andExpect(content().string("[]"));
     }
 
+
+    @Given("an application named {string}")
+    public void anApplicationNamed(String name) throws Exception {
+        action = mvc.perform(post(path + name));
+    }
+
+
     /* Application */
     @And("^the client receives an API-KEY$")
     public void the_client_receives_API_KEY() throws UnsupportedEncodingException, ParseException {
@@ -58,10 +76,10 @@ public class BadgeStepDefinition {
 
     @When("^the client posts /applications$")
     public void the_client_POST_applications() throws Throwable{
-        action = mvc.perform(post("/applications?name="+appName));
+        action = mvc.perform(post(path + appName));
     }
 
-
+    //TODO check si c'est possible d'atteindre une instance de l'API/serveur
     @Given("There is an application server")
     public void thereIsAnApplicationServer() {
 
