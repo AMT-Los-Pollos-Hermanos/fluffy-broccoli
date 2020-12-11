@@ -22,6 +22,8 @@ public class PointScale {
     @ApiModelProperty(example = "1", position = 1)
     private long id;
 
+    private String name;
+
     @ManyToOne
     private Application application;
 
