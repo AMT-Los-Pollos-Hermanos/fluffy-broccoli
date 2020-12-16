@@ -1,38 +1,33 @@
 package ch.heigvd.broccoli.application.badge;
+
+import ch.heigvd.broccoli.SpringIntegrationTest;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.cucumber.spring.CucumberContextConfiguration;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.remoting.httpinvoker.HttpInvokerRequestExecutor;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.http.HttpRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@CucumberContextConfiguration
-public class BadgeStepDefinition {
+
+public class BadgeStepDefinition extends SpringIntegrationTest {
 
     @Autowired
     private MockMvc mvc;
+
     MvcResult result;
     ResultActions action;
     String pathApplication = "/applications?name=";
@@ -93,7 +88,6 @@ public class BadgeStepDefinition {
     public void thereIsAnApplicationServer() {
 
     }
-
 
     @And("the client posts \\/badges")
     public void theClientPostsBadges() throws Exception {
