@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface UserPointScaleRepository extends JpaRepository<UserPointScale, Long> {
-    List<UserPointScale> findAllByUser(User user);
+public interface UserPointScaleRepository extends JpaRepository<UserReceivePoint, Long> {
+    List<UserReceivePoint> findAllByUser(User user);
 }

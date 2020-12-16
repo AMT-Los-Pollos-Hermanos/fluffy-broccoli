@@ -2,7 +2,7 @@ package ch.heigvd.broccoli.domain.user;
 
 import ch.heigvd.broccoli.domain.application.Application;
 import ch.heigvd.broccoli.domain.badge.Badge;
-import ch.heigvd.broccoli.domain.userpointscale.UserPointScale;
+import ch.heigvd.broccoli.domain.userpointscale.UserReceivePoint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,5 +34,5 @@ public class User {
     private List<Badge> badges;
 
     @OneToMany
-    private List<UserPointScale> userPointScales;
+    private List<UserReceivePoint> userReceivePoints;
 }

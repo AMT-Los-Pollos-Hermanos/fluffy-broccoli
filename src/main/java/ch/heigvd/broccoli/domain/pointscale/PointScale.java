@@ -1,7 +1,7 @@
 package ch.heigvd.broccoli.domain.pointscale;
 
 import ch.heigvd.broccoli.domain.application.Application;
-import ch.heigvd.broccoli.domain.userpointscale.UserPointScale;
+import ch.heigvd.broccoli.domain.userpointscale.UserReceivePoint;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,5 +28,5 @@ public class PointScale {
     private Application application;
 
     @OneToMany
-    private List<UserPointScale> userPointScales;
+    private List<UserReceivePoint> userReceivePoints;
 }
