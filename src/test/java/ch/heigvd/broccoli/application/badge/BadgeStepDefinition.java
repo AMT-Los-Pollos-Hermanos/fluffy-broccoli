@@ -42,7 +42,7 @@ public class BadgeStepDefinition {
 
 
     @When("the client get {string}")
-    public void theClientCalls(String path) throws Exception {
+    public void theClientGet(String path) throws Exception {
             action = mvc.perform(get(path+appName));
     }
 
@@ -51,12 +51,17 @@ public class BadgeStepDefinition {
         action = mvc.perform(MockMvcRequestBuilders.get(path).header("X-API-KEY", apiKey));
     }
 
+    @When("the client get {string} with wrong API-KEY")
+    public void theClientGetWithWrongAPIKEY(String path) throws Exception {
+        action = mvc.perform(MockMvcRequestBuilders.get(path).header("X-API-KEY", "WrongApiKey"));
+    }
+
     @Then("^the client receives status code of (\\d+)$")
     public void the_client_receives_status_code_of(int statusCode) throws Throwable {
         action.andExpect(status().is(statusCode));
     }
 
-    @And("^the client receives an array of badges$")
+    @And("^the client receives an empty array of badges$")
     public void the_client_receives_server_version_body() throws Throwable {
         action.andExpect(content().string("[]"));
     }
@@ -90,5 +95,9 @@ public class BadgeStepDefinition {
     }
 
 
+    @And("the client posts \\/badges")
+    public void theClientPostsBadges() throws Exception {
+        action = mvc.perform(post(pathApplication + appName));
+    }
 }
 
