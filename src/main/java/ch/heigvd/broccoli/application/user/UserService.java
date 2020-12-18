@@ -1,6 +1,7 @@
 package ch.heigvd.broccoli.application.user;
 
 import ch.heigvd.broccoli.application.badge.BadgeService;
+import ch.heigvd.broccoli.application.leaderboard.LeaderboardService;
 import ch.heigvd.broccoli.domain.application.Application;
 import ch.heigvd.broccoli.domain.user.User;
 import ch.heigvd.broccoli.domain.user.UserRepository;
@@ -15,8 +16,12 @@ import java.util.stream.Collectors;
 public class UserService{
 
     private final UserRepository repository;
+    private final LeaderboardService leaderboardService;
 
-    public UserService(UserRepository repository) { this.repository = repository; }
+    public UserService(UserRepository repository, LeaderboardService leaderboardService) {
+        this.repository = repository;
+        this.leaderboardService = leaderboardService;
+    }
 
     public List<UserDTO> all() { return toDTO(repository.findAllByApplication(app())); }
 
@@ -32,6 +37,7 @@ public class UserService{
                 .firstname(user.getFirstname())
                 .lastname(user.getLastname())
                 .username(user.getUsername())
+                .points(leaderboardService.getPointsUser(user))
                 .build();
     }
 

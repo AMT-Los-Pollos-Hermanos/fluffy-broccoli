@@ -1,5 +1,6 @@
 package ch.heigvd.broccoli.controller;
 
+import ch.heigvd.broccoli.application.leaderboard.LeaderboardDTO;
 import ch.heigvd.broccoli.application.leaderboard.LeaderboardService;
 import ch.heigvd.broccoli.application.user.UserDTO;
 import io.swagger.annotations.Api;
@@ -28,5 +29,5 @@ public class LeaderboardController {
 
     @ApiOperation("Get leaderboard")
     @GetMapping(value = "leaderboard", produces = "application/json")
-    Map<UserDTO, Double> get(int nbUsers) { return service.get(nbUsers); }
+    LeaderboardDTO get(int nbUsers) { return service.get(nbUsers); }
 }

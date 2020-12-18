@@ -17,24 +17,22 @@ import java.util.*;
 public class LeaderboardService {
 
     private final UserReceivePointRepository userReceivePointRepository;
-    private final UserService userService;
     private final UserRepository userRepository;
 
-    public LeaderboardService(UserReceivePointRepository userReceivePointRepository, UserRepository userRepository, UserService userService) {
+    public LeaderboardService(UserReceivePointRepository userReceivePointRepository, UserRepository userRepository) {
         this.userReceivePointRepository = userReceivePointRepository;
         this.userRepository = userRepository;
-        this.userService = userService;
     }
 
-    public Map<UserDTO, Double> get(int nbUsers){
+    public LeaderboardDTO get(int nbUsers){
         List<User> users = userRepository.findAll();
         Map<UserDTO, Double> rankingUsers = new TreeMap<>(Collections.reverseOrder());
         Map<UserDTO, Double> nRankingUsers = new TreeMap<>(Collections.reverseOrder());
 
-        // count de points for each users
+        // count points for each users
         for(User user : users){
             double point = getPointsUser(user);
-            rankingUsers.put(userService.toDTO(user), point);
+            rankingUsers.put(toDTO(user), point);
         }
 
         // select n first users for the leaderboard
@@ -47,10 +45,10 @@ public class LeaderboardService {
         }
 
 
-        return nRankingUsers;
+        return LeaderboardDTO.builder().leaderboard(nRankingUsers).build();
     }
 
-    private double getPointsUser(User user){
+    public double getPointsUser(User user){
         List<UserReceivePoint> userPoints = userReceivePointRepository.findAllByUser(user);
         var userPointsCurrentApp = new ArrayList<UserReceivePoint>();
         double points = 0;
@@ -73,6 +71,15 @@ public class LeaderboardService {
 
     private Application app() {
         return (Application) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
+    public UserDTO toDTO(User user){
+        return UserDTO.builder()
+                .id(user.getId())
+                .firstname(user.getFirstname())
+                .lastname(user.getLastname())
+                .username(user.getUsername())
+                .build();
     }
 
 }
