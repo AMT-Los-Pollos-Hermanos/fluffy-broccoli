@@ -1,5 +1,6 @@
 package ch.heigvd.broccoli.application.user;
 
+import ch.heigvd.broccoli.application.badge.BadgeService;
 import ch.heigvd.broccoli.domain.application.Application;
 import ch.heigvd.broccoli.domain.user.User;
 import ch.heigvd.broccoli.domain.user.UserRepository;
@@ -11,7 +12,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService {
+public class UserService{
 
     private final UserRepository repository;
 

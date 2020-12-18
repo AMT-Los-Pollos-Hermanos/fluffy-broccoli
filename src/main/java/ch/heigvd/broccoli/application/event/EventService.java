@@ -1,5 +1,6 @@
 package ch.heigvd.broccoli.application.event;
 
+import ch.heigvd.broccoli.application.BaseService;
 import ch.heigvd.broccoli.application.award.AwardService;
 import ch.heigvd.broccoli.domain.application.Application;
 import ch.heigvd.broccoli.domain.award.Award;
