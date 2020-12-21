@@ -31,7 +31,7 @@ UserPointScaleDTO :
 
 ### Modification sur la DB : 
 - Retirer first_name et last_name de la table User
-- User.id devient l'id pour les traitement dans la db interne, username est mappé à l'id de l'user utilisé par le service externe (UUID)
+- User.id devient l'id pour les traitement dans la db interne, username est mappé à l'id de l'userEntity utilisé par le service externe (UUID)
 - Ajouter name à la table PointScale (nom de l'échelle)
 - Ajout de la réputation pour l'utilisateur. Valeur calculé par rapport au points et badges (1 point = 1 réputation, 1 badge = 10 réputation)
 

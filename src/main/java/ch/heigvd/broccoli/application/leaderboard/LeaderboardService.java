@@ -1,10 +1,8 @@
 package ch.heigvd.broccoli.application.leaderboard;
 
 import ch.heigvd.broccoli.application.user.UserDTO;
-import ch.heigvd.broccoli.application.user.UserService;
 import ch.heigvd.broccoli.domain.application.Application;
-import ch.heigvd.broccoli.domain.pointscale.PointScale;
-import ch.heigvd.broccoli.domain.user.User;
+import ch.heigvd.broccoli.domain.user.UserEntity;
 import ch.heigvd.broccoli.domain.user.UserRepository;
 import ch.heigvd.broccoli.domain.userpointscale.UserReceivePoint;
 import ch.heigvd.broccoli.domain.userpointscale.UserReceivePointRepository;
@@ -25,14 +23,14 @@ public class LeaderboardService {
     }
 
     public LeaderboardDTO get(int nbUsers){
-        List<User> users = userRepository.findAll();
+        List<UserEntity> userEntities = userRepository.findAll();
         Map<UserDTO, Double> rankingUsers = new TreeMap<>(Collections.reverseOrder());
         Map<UserDTO, Double> nRankingUsers = new TreeMap<>(Collections.reverseOrder());
 
         // count points for each users
-        for(User user : users){
-            double point = getPointsUser(user);
-            rankingUsers.put(toDTO(user), point);
+        for(UserEntity userEntity : userEntities){
+            double point = getPointsUser(userEntity);
+            rankingUsers.put(toDTO(userEntity), point);
         }
 
         // select n first users for the leaderboard
@@ -48,8 +46,8 @@ public class LeaderboardService {
         return LeaderboardDTO.builder().leaderboard(nRankingUsers).build();
     }
 
-    public double getPointsUser(User user){
-        List<UserReceivePoint> userPoints = userReceivePointRepository.findAllByUser(user);
+    public double getPointsUser(UserEntity userEntity){
+        List<UserReceivePoint> userPoints = userReceivePointRepository.findAllByUserEntity(userEntity);
         var userPointsCurrentApp = new ArrayList<UserReceivePoint>();
         double points = 0;
 
@@ -73,12 +71,12 @@ public class LeaderboardService {
         return (Application) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
-    public UserDTO toDTO(User user){
+    public UserDTO toDTO(UserEntity userEntity){
         return UserDTO.builder()
-                .id(user.getId())
-                .firstname(user.getFirstname())
-                .lastname(user.getLastname())
-                .username(user.getUsername())
+                .id(userEntity.getId())
+                .firstname(userEntity.getFirstname())
+                .lastname(userEntity.getLastname())
+                .username(userEntity.getUsername())
                 .build();
     }
 

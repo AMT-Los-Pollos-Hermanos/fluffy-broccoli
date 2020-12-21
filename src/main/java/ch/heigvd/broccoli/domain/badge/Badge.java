@@ -1,7 +1,7 @@
 package ch.heigvd.broccoli.domain.badge;
 
 import ch.heigvd.broccoli.domain.application.Application;
-import ch.heigvd.broccoli.domain.user.User;
+import ch.heigvd.broccoli.domain.user.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,5 +30,5 @@ public class Badge {
     private Application application;
 
     @ManyToMany
-    private List<User> users;
+    private List<UserEntity> userEntities;
 }

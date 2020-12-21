@@ -1,9 +1,8 @@
 package ch.heigvd.broccoli.application.user;
 
-import ch.heigvd.broccoli.application.badge.BadgeService;
 import ch.heigvd.broccoli.application.leaderboard.LeaderboardService;
 import ch.heigvd.broccoli.domain.application.Application;
-import ch.heigvd.broccoli.domain.user.User;
+import ch.heigvd.broccoli.domain.user.UserEntity;
 import ch.heigvd.broccoli.domain.user.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -27,22 +26,22 @@ public class UserService{
 
     public UserDTO one(Long id) { return toDTO(repository.findByIdAndApplication(id, app())); }
 
-    private UserDTO toDTO(Optional<User> user){
+    private UserDTO toDTO(Optional<UserEntity> user){
         return user.map(this::toDTO).orElse(null);
     }
 
-    public UserDTO toDTO(User user){
+    public UserDTO toDTO(UserEntity userEntity){
         return UserDTO.builder()
-                .id(user.getId())
-                .firstname(user.getFirstname())
-                .lastname(user.getLastname())
-                .username(user.getUsername())
-                .points(leaderboardService.getPointsUser(user))
+                .id(userEntity.getId())
+                .firstname(userEntity.getFirstname())
+                .lastname(userEntity.getLastname())
+                .username(userEntity.getUsername())
+                .points(leaderboardService.getPointsUser(userEntity))
                 .build();
     }
 
-    public List<UserDTO> toDTO(List<User> users){
-        return users.stream().map(this::toDTO).collect(Collectors.toList());
+    public List<UserDTO> toDTO(List<UserEntity> userEntities){
+        return userEntities.stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     public Application app() {
