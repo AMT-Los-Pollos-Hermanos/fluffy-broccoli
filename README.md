@@ -41,16 +41,15 @@ UserPointScaleDTO :
 ```json
 {
   "event": {
-    "userId": "idInTheGamifiedApp",
-    "timestamp": "2018-12-17:17-00-00",
+    "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
     "type": "drink",
     "properties": {
-      "type": "beer",
-      "quantity": "some"
+      "somekey1": "somevalue1",
+      "somekey2": "somevalue2",
+      "somekey3": "somevalue3"
     }
   }
 }
-
 ```
 
 ## Rules specification (without state)
@@ -61,18 +60,20 @@ UserPointScaleDTO :
     "if": {
       "type": "drink",
       "properties": {
-        "type": "beer",
-        "quantity": "some"
+        "somekey1": "somevalue1",
+        "somekey2": "somevalue2",
+        "somekey3": "somevalue3"
       }
     },
     "then": {
-      "awardBadge": "/badges/champion",
-      "awardPoints": {
-        "pointScale": "/pointScales/health",
+      "award_badge": {
+        "badge_id": 8
+      },
+      "award_points": {
+        "point_scale_id": 12,
         "amount": 1000
       }
     }
   }
 }
 ```
-

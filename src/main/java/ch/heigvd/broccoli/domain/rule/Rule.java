@@ -21,7 +21,7 @@ import javax.persistence.*;
 public class Rule {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Convert(converter = RuleIfConverter.class)

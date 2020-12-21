@@ -1,5 +1,6 @@
 package ch.heigvd.broccoli.application.event;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,6 +13,8 @@ public class EventDTO {
 
     private String type;
     private Map<String, String> properties;
+
+    @JsonProperty("user_id")
     private UUID userId;
 
 }

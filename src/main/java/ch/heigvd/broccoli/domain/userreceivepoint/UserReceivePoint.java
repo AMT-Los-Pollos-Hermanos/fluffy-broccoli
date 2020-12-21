@@ -19,7 +19,7 @@ import java.util.Date;
 public class UserReceivePoint {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @ManyToOne

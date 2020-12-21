@@ -15,7 +15,8 @@ import java.util.List;
 @NoArgsConstructor
 public class PointScale {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String name;
@@ -31,4 +32,5 @@ public class PointScale {
     @ToString.Exclude
     @Builder.Default
     private List<UserReceivePoint> userReceivePoints = new ArrayList<>();
+
 }

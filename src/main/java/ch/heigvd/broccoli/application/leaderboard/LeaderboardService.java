@@ -1,12 +1,10 @@
 package ch.heigvd.broccoli.application.leaderboard;
 
 import ch.heigvd.broccoli.application.user.UserDTO;
-import ch.heigvd.broccoli.domain.application.Application;
 import ch.heigvd.broccoli.domain.user.UserEntity;
 import ch.heigvd.broccoli.domain.user.UserRepository;
 import ch.heigvd.broccoli.domain.userreceivepoint.UserReceivePoint;
 import ch.heigvd.broccoli.domain.userreceivepoint.UserReceivePointRepository;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -55,10 +53,6 @@ public class LeaderboardService {
         }
 
         return points;
-    }
-
-    private Application app() {
-        return (Application) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     public UserDTO toDTO(UserEntity userEntity) {
