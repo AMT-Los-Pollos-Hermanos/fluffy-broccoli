@@ -6,12 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import java.sql.Timestamp;
+import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Data
@@ -20,7 +18,8 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 public class UserReceivePoint {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private long id;
 
     @ManyToOne
@@ -31,6 +30,9 @@ public class UserReceivePoint {
 
     private double points;
 
-    private Timestamp timestamp;
+    @Column(insertable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
+    private Date timestamp;
 
 }

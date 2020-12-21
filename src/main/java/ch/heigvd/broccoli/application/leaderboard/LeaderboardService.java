@@ -22,56 +22,46 @@ public class LeaderboardService {
         this.userRepository = userRepository;
     }
 
-    public LeaderboardDTO get(int nbUsers){
+    public LeaderboardDTO get(int nbUsers) {
         List<UserEntity> userEntities = userRepository.findAll();
-        Map<UserDTO, Double> rankingUsers = new TreeMap<>(Collections.reverseOrder());
-        Map<UserDTO, Double> nRankingUsers = new TreeMap<>(Collections.reverseOrder());
+        Map<Double, UserDTO> rankingUsers = new TreeMap<>(Collections.reverseOrder());
+        Map<UUID, Double> nRankingUsers = new LinkedHashMap<>();
 
         // count points for each users
-        for(UserEntity userEntity : userEntities){
+        for (UserEntity userEntity : userEntities) {
             double point = getPointsUser(userEntity);
-            rankingUsers.put(toDTO(userEntity), point);
+            rankingUsers.put(point, toDTO(userEntity));
         }
 
         // select n first users for the leaderboard
         int count = 0;
-        for(Map.Entry<UserDTO, Double> entry:rankingUsers.entrySet()){
-            if(count >= nbUsers) break;
+        for (Map.Entry<Double, UserDTO> entry : rankingUsers.entrySet()) {
+            if (count >= nbUsers) break;
 
-            nRankingUsers.put(entry.getKey(), entry.getValue());
+            nRankingUsers.put(entry.getValue().getId(), entry.getKey());
             count++;
         }
-
 
         return LeaderboardDTO.builder().leaderboard(nRankingUsers).build();
     }
 
-    public double getPointsUser(UserEntity userEntity){
+    public double getPointsUser(UserEntity userEntity) {
         List<UserReceivePoint> userPoints = userReceivePointRepository.findAllByUserEntity(userEntity);
-        var userPointsCurrentApp = new ArrayList<UserReceivePoint>();
         double points = 0;
 
-        // get all the points received from current app
-        for(UserReceivePoint userPoint : userPoints){
-            if(userPoint.getPointScale().getApplication().equals(app())){
-                userPointsCurrentApp.add(userPoint);
-            }
-        }
-
         // count the points
-        for(UserReceivePoint userPoint : userPointsCurrentApp){
+        for (UserReceivePoint userPoint : userPoints) {
             points += userPoint.getPoints();
         }
 
         return points;
     }
 
-
     private Application app() {
         return (Application) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
-    public UserDTO toDTO(UserEntity userEntity){
+    public UserDTO toDTO(UserEntity userEntity) {
         return UserDTO.builder()
                 .id(userEntity.getId())
                 .build();

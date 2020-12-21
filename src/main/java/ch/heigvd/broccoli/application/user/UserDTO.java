@@ -10,10 +10,11 @@ import java.util.UUID;
 @Data
 @Builder
 public class UserDTO {
+
     private UUID id;
 
     private Double points;
 
     private List<BadgeDTO> badges;
-    // TODO need List<BadgeDTO> and List<UserPointScaleDTO>
+
 }

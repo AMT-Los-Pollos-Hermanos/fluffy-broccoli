@@ -1,6 +1,5 @@
 package ch.heigvd.broccoli.domain.userreceivepoint;
 
-import ch.heigvd.broccoli.domain.pointscale.PointScale;
 import ch.heigvd.broccoli.domain.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -10,5 +9,5 @@ public interface UserReceivePointRepository extends JpaRepository<UserReceivePoi
 
     List<UserReceivePoint> findAllByUserEntity(UserEntity userEntity);
 
-    List<UserReceivePoint> findByUserEntityAndPointScale(UserEntity userEntity, PointScale pointScale);
+    List<UserReceivePoint> findByUserEntityAndPointScaleIdOrderByTimestampDesc(UserEntity userEntity, Long pointScaleId);
 }
