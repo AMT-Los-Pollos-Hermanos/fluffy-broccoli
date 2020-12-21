@@ -1,4 +1,4 @@
-package ch.heigvd.broccoli.domain.userpointscale;
+package ch.heigvd.broccoli.domain.userreceivepoint;
 
 import ch.heigvd.broccoli.domain.pointscale.PointScale;
 import ch.heigvd.broccoli.domain.user.UserEntity;

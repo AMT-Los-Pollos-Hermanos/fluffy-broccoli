@@ -2,16 +2,13 @@ package ch.heigvd.broccoli.controller;
 
 import ch.heigvd.broccoli.application.leaderboard.LeaderboardDTO;
 import ch.heigvd.broccoli.application.leaderboard.LeaderboardService;
-import ch.heigvd.broccoli.application.user.UserDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.Map;
 
 @Api(tags = "Leaderboards")
 @ApiResponses({
@@ -29,5 +26,5 @@ public class LeaderboardController {
 
     @ApiOperation("Get leaderboard")
     @GetMapping(value = "leaderboard", produces = "application/json")
-    LeaderboardDTO get(int nbUsers) { return service.get(nbUsers); }
+    LeaderboardDTO get(@RequestParam int nbUsers) { return service.get(nbUsers); }
 }

@@ -1,14 +1,11 @@
 package ch.heigvd.broccoli.domain.pointscale;
 
 import ch.heigvd.broccoli.domain.application.Application;
-import ch.heigvd.broccoli.domain.userpointscale.UserReceivePoint;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import ch.heigvd.broccoli.domain.userreceivepoint.UserReceivePoint;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,7 +16,6 @@ import java.util.List;
 public class PointScale {
 
     @Id @GeneratedValue
-    @ApiModelProperty(example = "1", position = 1)
     private long id;
 
     private String name;
@@ -27,6 +23,12 @@ public class PointScale {
     @ManyToOne
     private Application application;
 
-    @OneToMany
-    private List<UserReceivePoint> userReceivePoints;
+    @OneToMany(
+            mappedBy = "pointScale",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @ToString.Exclude
+    @Builder.Default
+    private List<UserReceivePoint> userReceivePoints = new ArrayList<>();
 }

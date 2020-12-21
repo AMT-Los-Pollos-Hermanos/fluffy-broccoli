@@ -1,19 +1,19 @@
 package ch.heigvd.broccoli.application.user;
 
+import ch.heigvd.broccoli.application.badge.BadgeDTO;
 import lombok.Builder;
 import lombok.Data;
+
+import java.util.List;
+import java.util.UUID;
 
 @Data
 @Builder
 public class UserDTO {
-    private long id; // TODO must be UUID or String
-
-    private String firstname;
-
-    private String lastname;
-
-    private String username;
+    private UUID id;
 
     private Double points;
+
+    private List<BadgeDTO> badges;
     // TODO need List<BadgeDTO> and List<UserPointScaleDTO>
 }

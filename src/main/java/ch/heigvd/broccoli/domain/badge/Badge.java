@@ -2,12 +2,10 @@ package ch.heigvd.broccoli.domain.badge;
 
 import ch.heigvd.broccoli.domain.application.Application;
 import ch.heigvd.broccoli.domain.user.UserEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,6 +27,8 @@ public class Badge {
     @ManyToOne
     private Application application;
 
-    @ManyToMany
-    private List<UserEntity> userEntities;
+    @ManyToMany(mappedBy = "badges")
+    @Builder.Default
+    @ToString.Exclude
+    private List<UserEntity> users = new ArrayList<>();
 }

@@ -4,8 +4,8 @@ import ch.heigvd.broccoli.application.user.UserDTO;
 import ch.heigvd.broccoli.domain.application.Application;
 import ch.heigvd.broccoli.domain.user.UserEntity;
 import ch.heigvd.broccoli.domain.user.UserRepository;
-import ch.heigvd.broccoli.domain.userpointscale.UserReceivePoint;
-import ch.heigvd.broccoli.domain.userpointscale.UserReceivePointRepository;
+import ch.heigvd.broccoli.domain.userreceivepoint.UserReceivePoint;
+import ch.heigvd.broccoli.domain.userreceivepoint.UserReceivePointRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -74,9 +74,6 @@ public class LeaderboardService {
     public UserDTO toDTO(UserEntity userEntity){
         return UserDTO.builder()
                 .id(userEntity.getId())
-                .firstname(userEntity.getFirstname())
-                .lastname(userEntity.getLastname())
-                .username(userEntity.getUsername())
                 .build();
     }
 
