@@ -47,6 +47,21 @@ public class BadgeStepDefinition extends SpringIntegrationTest {
         action = mvc.perform(MockMvcRequestBuilders.get(path).header("X-API-KEY", apiKey));
     }
 
+    //TODO
+    @When("the client put {string} with API-KEY")
+    public void theClientPutWithAPIKEY(String path) throws Exception {
+        action = mvc.perform(MockMvcRequestBuilders.put(path)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("X-API-KEY", apiKey)
+                .content("{\"description\":\"This badge has been modified\",\"icon\":\"/images/icon.png\",\"id\": 6,\"name\":\"My amazing badge\"}"));
+    }
+
+    //TODO
+    @When("the client delete {string} with API-KEY")
+    public void theClientDeleteWithAPIKEY(String path) throws Exception {
+        action = mvc.perform(MockMvcRequestBuilders.get(path).header("X-API-KEY", apiKey));
+    }
+
     @When("the client get {string} with wrong API-KEY")
     public void theClientGetWithWrongAPIKEY(String path) throws Exception {
         action = mvc.perform(MockMvcRequestBuilders.get(path).header("X-API-KEY", "WrongApiKey"));
@@ -85,6 +100,11 @@ public class BadgeStepDefinition extends SpringIntegrationTest {
         }
         sb.append("]");
         action.andExpect(content().string(sb.toString()));
+    }
+
+    @Then("^the client has updated a badge$")
+    public void theClientHasUpdatedABadge() throws Exception {
+        action.andExpect(content().string("{\"id\":6,\"name\":\"My amazing badge\",\"description\":\"This badge has been modified\",\"icon\":\"/images/icon.png\"}"));
     }
 
 
@@ -128,6 +148,7 @@ public class BadgeStepDefinition extends SpringIntegrationTest {
                             .append(",\"name\":\"My amazing badge ")
                             .append(i + 1)
                             .append("\"}");
+
             action = mvc.perform(MockMvcRequestBuilders.post(pathBadges)
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("X-API-KEY", apiKey)
@@ -135,5 +156,6 @@ public class BadgeStepDefinition extends SpringIntegrationTest {
                     .andExpect(status().is(201));
         }
     }
+
 }
 
