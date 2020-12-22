@@ -47,7 +47,7 @@ public class BadgeStepDefinition extends SpringIntegrationTest {
         action = mvc.perform(MockMvcRequestBuilders.get(path).header("X-API-KEY", apiKey));
     }
 
-    //TODO
+
     @When("the client put {string} with API-KEY")
     public void theClientPutWithAPIKEY(String path) throws Exception {
         action = mvc.perform(MockMvcRequestBuilders.put(path)
@@ -56,16 +56,31 @@ public class BadgeStepDefinition extends SpringIntegrationTest {
                 .content("{\"description\":\"This badge has been modified\",\"icon\":\"/images/icon.png\",\"id\": 6,\"name\":\"My amazing badge\"}"));
     }
 
-    //TODO
     @When("the client delete {string} with API-KEY")
     public void theClientDeleteWithAPIKEY(String path) throws Exception {
-        action = mvc.perform(MockMvcRequestBuilders.get(path).header("X-API-KEY", apiKey));
+        action = mvc.perform(MockMvcRequestBuilders.delete(path)
+                .header("X-API-KEY", apiKey));
     }
 
     @When("the client get {string} with wrong API-KEY")
     public void theClientGetWithWrongAPIKEY(String path) throws Exception {
         action = mvc.perform(MockMvcRequestBuilders.get(path).header("X-API-KEY", "WrongApiKey"));
     }
+
+    @When("the client put {string} with wrong API-KEY")
+    public void theClientPutWithWrongAPIKEY(String path) throws Exception {
+        action = mvc.perform(MockMvcRequestBuilders.put(path)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("X-API-KEY", apiKey)
+                .content("{\"description\":\"This badge has been modified\",\"icon\":\"/images/icon.png\",\"id\": 6,\"name\":\"My amazing badge\"}"));
+    }
+
+    @When("the client delete {string} with wrong API-KEY")
+    public void theClientDeleteWithWrongAPIKEY(String path) throws Exception {
+        action = mvc.perform(MockMvcRequestBuilders.delete(path)
+                .header("X-API-KEY", "WrongApiKey"));
+    }
+
 
     @Then("^the client receives status code of (\\d+)$")
     public void the_client_receives_status_code_of(int statusCode) throws Throwable {
