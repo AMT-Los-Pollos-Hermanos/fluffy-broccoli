@@ -12,6 +12,7 @@ public class BadgeService extends BaseService<BadgeDTO, Badge> {
         this.repository = repository;
     }
 
+
     @Override
     public BadgeDTO add(BadgeDTO badgeDTO) {
         return toDTO(repository.save(Badge.builder()

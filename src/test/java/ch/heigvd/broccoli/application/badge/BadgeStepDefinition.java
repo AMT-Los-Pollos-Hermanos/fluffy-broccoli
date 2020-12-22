@@ -9,6 +9,7 @@ import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -22,7 +23,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 public class BadgeStepDefinition extends SpringIntegrationTest {
 
     @Autowired
@@ -30,6 +30,7 @@ public class BadgeStepDefinition extends SpringIntegrationTest {
 
     MvcResult result;
     ResultActions action;
+    String pathBadges = "/badges";
     String pathApplication = "/applications?name=";
     String appName = "test";
     String apiKey = "";
@@ -38,7 +39,7 @@ public class BadgeStepDefinition extends SpringIntegrationTest {
 
     @When("the client get {string}")
     public void theClientGet(String path) throws Exception {
-            action = mvc.perform(get(path+appName));
+        action = mvc.perform(get(path+appName));
     }
 
     @When("the client get {string} with API-KEY")
@@ -56,9 +57,34 @@ public class BadgeStepDefinition extends SpringIntegrationTest {
         action.andExpect(status().is(statusCode));
     }
 
+    @Then("^the client receives a badge$")
+    public void theClientReceivesAnArrayOfBadges() throws Throwable {
+        action.andExpect(content().string("{\"id\":6,\"name\":\"My amazing badge\",\"description\":\"You can get this badge after 50 comments\",\"icon\":\"/images/icon.png\"}"));
+    }
+
     @And("^the client receives an empty array of badges$")
     public void the_client_receives_server_version_body() throws Throwable {
         action.andExpect(content().string("[]"));
+    }
+
+    @And("^the client receives an array of (\\d+) badges$")
+    public void theClientReceivesAnEmptyArrayOfBadges(int nbBadges) throws Throwable {
+        StringBuilder sb = new StringBuilder("[");
+        for(int i = 0; i < nbBadges; ++i) {
+            sb.append("{\"id\":")
+                    .append(i + 1)
+                    .append(",\"name\":\"My amazing badge ")
+                    .append(i + 1)
+                    .append("\",\"description\":\"You can get this badge after ")
+                    .append(5 * (i + 1))
+                    .append(" comments\",\"icon\":\"/images/icon.png\"}");
+
+                    if(i < nbBadges - 1) {
+                        sb.append(",");
+                    }
+        }
+        sb.append("]");
+        action.andExpect(content().string(sb.toString()));
     }
 
 
@@ -83,15 +109,31 @@ public class BadgeStepDefinition extends SpringIntegrationTest {
         action = mvc.perform(post(pathApplication + appName));
     }
 
-    //TODO check si c'est possible d'atteindre une instance de l'API/serveur
-    @Given("There is an application server")
-    public void thereIsAnApplicationServer() {
-
+    @When("^the client posts /badges$")
+    public void theClientPostsBadges() throws Exception {
+        action = mvc.perform(MockMvcRequestBuilders.post(pathBadges)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("X-API-KEY", apiKey)
+                .content("{\"description\":\"You can get this badge after 50 comments\",\"icon\":\"/images/icon.png\",\"id\": 6,\"name\":\"My amazing badge\"}"));
     }
 
-    @And("the client posts \\/badges")
-    public void theClientPostsBadges() throws Exception {
-        action = mvc.perform(post(pathApplication + appName));
+    @When("^the client posts /badges (\\d+) times$")
+    public void theClientPostsBadgesMultipleTimes(int nbRequests) throws Exception {
+
+        for(int i = 0; i < nbRequests; ++i) {
+            StringBuilder sb = new StringBuilder("{\"description\":\"You can get this badge after ")
+                            .append(5 * (i + 1))
+                            .append(" comments\",\"icon\":\"/images/icon.png\",\"id\":")
+                            .append(i + 1)
+                            .append(",\"name\":\"My amazing badge ")
+                            .append(i + 1)
+                            .append("\"}");
+            action = mvc.perform(MockMvcRequestBuilders.post(pathBadges)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("X-API-KEY", apiKey)
+                    .content(sb.toString()))
+                    .andExpect(status().is(201));
+        }
     }
 }
 
