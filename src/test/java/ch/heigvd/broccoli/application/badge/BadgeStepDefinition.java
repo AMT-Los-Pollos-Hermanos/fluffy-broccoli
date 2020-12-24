@@ -54,9 +54,9 @@ public class BadgeStepDefinition extends SpringIntegrationTest {
     }
 
     //POST
-    @When("^the client posts /badges$")
-    public void theClientPostsBadges() throws Exception {
-        action = mvc.perform(MockMvcRequestBuilders.post(pathBadges)
+    @When("the client posts {string}")
+    public void theClientPostsBadges(String path) throws Exception {
+        action = mvc.perform(MockMvcRequestBuilders.post(path)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("X-API-KEY", apiKey)
                 .content("{\"description\":\"You can get this badge after 50 comments\",\"icon\":\"/images/icon.png\",\"id\": 6,\"name\":\"My amazing badge\"}"));
@@ -83,6 +83,11 @@ public class BadgeStepDefinition extends SpringIntegrationTest {
     }
 
     //PUT
+    @When("the client put {string}")
+    public void theClientPut(String path) throws Exception {
+        action = mvc.perform(MockMvcRequestBuilders.put(path+appName));
+    }
+
     @When("the client put {string} with API-KEY")
     public void theClientPutWithAPIKEY(String path) throws Exception {
         action = mvc.perform(MockMvcRequestBuilders.put(path)
@@ -100,6 +105,11 @@ public class BadgeStepDefinition extends SpringIntegrationTest {
     }
 
     //DELETE
+    @When("the client delete {string}")
+    public void theClientDelete(String path) throws Exception {
+        action = mvc.perform(MockMvcRequestBuilders.delete(path+appName));
+    }
+
     @When("the client delete {string} with API-KEY")
     public void theClientDeleteWithAPIKEY(String path) throws Exception {
         action = mvc.perform(MockMvcRequestBuilders.delete(path)

@@ -1,24 +1,5 @@
 Feature: Badges can be retrieved
-  Scenario: the client makes call to GET /badges with no application
-    When the client get "/badges"
-    Then the client receives status code of 403
 
-
-  Scenario: the client makes call to GET /badges with wrong API-KEY
-    Given an application named "test"
-    When the client get "/badges" with wrong API-KEY
-    Then the client receives status code of 403
-
-
-  Scenario: the client makes call to DELETE /badges/1 with wrong API-KEY
-    Given an application named "test"
-    When the client delete "/badges/1" with wrong API-KEY
-    Then the client receives status code of 403
-
-  Scenario: the client makes call to PUT /badges/1 with wrong API-KEY
-    Given an application named "test"
-    When the client put "/badges/1" with wrong API-KEY
-    Then the client receives status code of 403
 
   Scenario: the client makes call to GET /badges with existing application and no posted badge
     Given an application named "test"
@@ -40,7 +21,7 @@ Feature: Badges can be retrieved
   Scenario: the client makes call to GET /badges/6, PUT /badges/6 and DELETE /badges/6 with existing application
     Given an application named "test"
     And the client receives an API-KEY
-    When the client posts /badges
+    When the client posts "/badges"
     Then the client receives status code of 201
     When the client get "/badges/6" with API-KEY
     Then the client receives a badge
@@ -50,7 +31,6 @@ Feature: Badges can be retrieved
     Then the client receives status code of 200
     When the client get "/badges/6" with API-KEY
     Then the client has updated a badge
-
     #TODO Check when merged with master if it works
     When the client delete "/badges/6" with API-KEY
     Then the client receives status code of 204
