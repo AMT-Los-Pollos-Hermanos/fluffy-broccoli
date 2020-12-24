@@ -1,10 +1,10 @@
 package ch.heigvd.broccoli.domain.rule;
 
+import ch.heigvd.broccoli.domain.rule.specification.RuleIf;
+import ch.heigvd.broccoli.domain.rule.specification.RuleIfConverter;
+import ch.heigvd.broccoli.domain.rule.specification.RuleThen;
+import ch.heigvd.broccoli.domain.rule.specification.RuleThenConverter;
 import ch.heigvd.broccoli.domain.application.Application;
-import ch.heigvd.broccoli.application.rule.specification.RuleIf;
-import ch.heigvd.broccoli.application.rule.specification.RuleIfConverter;
-import ch.heigvd.broccoli.application.rule.specification.RuleThen;
-import ch.heigvd.broccoli.application.rule.specification.RuleThenConverter;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,13 +21,15 @@ import javax.persistence.*;
 public class Rule {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Convert(converter = RuleIfConverter.class)
+    @Column(columnDefinition = "TEXT")
     private RuleIf ruleIf;
 
     @Convert(converter = RuleThenConverter.class)
+    @Column(columnDefinition = "TEXT")
     private RuleThen ruleThen;
 
     @ManyToOne

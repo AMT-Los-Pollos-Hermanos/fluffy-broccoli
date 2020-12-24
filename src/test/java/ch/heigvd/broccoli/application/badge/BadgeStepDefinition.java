@@ -9,7 +9,11 @@ import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.MediaType;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -23,7 +27,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class BadgeStepDefinition extends SpringIntegrationTest {
+@SpringBootTest(properties = {"spring.datasource.url=jdbc:h2:mem:db"})
+@AutoConfigureMockMvc
+@CucumberContextConfiguration
+public class BadgeStepDefinition {
 
     @Autowired
     private MockMvc mvc;

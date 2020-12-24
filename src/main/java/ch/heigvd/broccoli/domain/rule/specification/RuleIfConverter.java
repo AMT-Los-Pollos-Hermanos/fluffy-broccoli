@@ -1,22 +1,22 @@
-package ch.heigvd.broccoli.application.rule.specification;
+package ch.heigvd.broccoli.domain.rule.specification;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.persistence.AttributeConverter;
 
-public class RuleThenConverter implements AttributeConverter<RuleThen, String> {
+public class RuleIfConverter implements AttributeConverter<RuleIf, String> {
 
     ObjectMapper objectMapper;
 
-    public RuleThenConverter() {
+    public RuleIfConverter() {
         this.objectMapper = new ObjectMapper();
     }
 
     @Override
-    public String convertToDatabaseColumn(RuleThen ruleThen) {
+    public String convertToDatabaseColumn(RuleIf ruleIf) {
         try {
-            return objectMapper.writeValueAsString(ruleThen);
+            return objectMapper.writeValueAsString(ruleIf);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -24,9 +24,9 @@ public class RuleThenConverter implements AttributeConverter<RuleThen, String> {
     }
 
     @Override
-    public RuleThen convertToEntityAttribute(String s) {
+    public RuleIf convertToEntityAttribute(String s) {
         try {
-            return objectMapper.readValue(s, RuleThen.class);
+            return objectMapper.readValue(s, RuleIf.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

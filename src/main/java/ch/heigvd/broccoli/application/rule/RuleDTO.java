@@ -1,7 +1,7 @@
 package ch.heigvd.broccoli.application.rule;
 
-import ch.heigvd.broccoli.application.rule.specification.RuleIf;
-import ch.heigvd.broccoli.application.rule.specification.RuleThen;
+import ch.heigvd.broccoli.domain.rule.specification.RuleIf;
+import ch.heigvd.broccoli.domain.rule.specification.RuleThen;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;

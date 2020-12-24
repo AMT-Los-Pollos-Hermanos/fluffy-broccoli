@@ -1,4 +1,4 @@
-package ch.heigvd.broccoli.application.rule.specification;
+package ch.heigvd.broccoli.domain.rule.specification;
 
 import lombok.Data;
 
