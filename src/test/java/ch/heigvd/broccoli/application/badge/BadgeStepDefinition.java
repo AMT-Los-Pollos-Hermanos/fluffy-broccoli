@@ -36,7 +36,8 @@ public class BadgeStepDefinition extends SpringIntegrationTest {
     String apiKey = "";
 
 
-
+    /* Badges */
+    //GET
     @When("the client get {string}")
     public void theClientGet(String path) throws Exception {
         action = mvc.perform(get(path+appName));
@@ -47,7 +48,41 @@ public class BadgeStepDefinition extends SpringIntegrationTest {
         action = mvc.perform(MockMvcRequestBuilders.get(path).header("X-API-KEY", apiKey));
     }
 
+    @When("the client get {string} with wrong API-KEY")
+    public void theClientGetWithWrongAPIKEY(String path) throws Exception {
+        action = mvc.perform(MockMvcRequestBuilders.get(path).header("X-API-KEY", "WrongApiKey"));
+    }
 
+    //POST
+    @When("^the client posts /badges$")
+    public void theClientPostsBadges() throws Exception {
+        action = mvc.perform(MockMvcRequestBuilders.post(pathBadges)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("X-API-KEY", apiKey)
+                .content("{\"description\":\"You can get this badge after 50 comments\",\"icon\":\"/images/icon.png\",\"id\": 6,\"name\":\"My amazing badge\"}"));
+    }
+
+    @When("^the client posts /badges (\\d+) times$")
+    public void theClientPostsBadgesMultipleTimes(int nbRequests) throws Exception {
+
+        for(int i = 0; i < nbRequests; ++i) {
+            StringBuilder sb = new StringBuilder("{\"description\":\"You can get this badge after ")
+                    .append(5 * (i + 1))
+                    .append(" comments\",\"icon\":\"/images/icon.png\",\"id\":")
+                    .append(i + 1)
+                    .append(",\"name\":\"My amazing badge ")
+                    .append(i + 1)
+                    .append("\"}");
+
+            action = mvc.perform(MockMvcRequestBuilders.post(pathBadges)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("X-API-KEY", apiKey)
+                    .content(sb.toString()))
+                    .andExpect(status().is(201));
+        }
+    }
+
+    //PUT
     @When("the client put {string} with API-KEY")
     public void theClientPutWithAPIKEY(String path) throws Exception {
         action = mvc.perform(MockMvcRequestBuilders.put(path)
@@ -56,23 +91,19 @@ public class BadgeStepDefinition extends SpringIntegrationTest {
                 .content("{\"description\":\"This badge has been modified\",\"icon\":\"/images/icon.png\",\"id\": 6,\"name\":\"My amazing badge\"}"));
     }
 
-    @When("the client delete {string} with API-KEY")
-    public void theClientDeleteWithAPIKEY(String path) throws Exception {
-        action = mvc.perform(MockMvcRequestBuilders.delete(path)
-                .header("X-API-KEY", apiKey));
-    }
-
-    @When("the client get {string} with wrong API-KEY")
-    public void theClientGetWithWrongAPIKEY(String path) throws Exception {
-        action = mvc.perform(MockMvcRequestBuilders.get(path).header("X-API-KEY", "WrongApiKey"));
-    }
-
     @When("the client put {string} with wrong API-KEY")
     public void theClientPutWithWrongAPIKEY(String path) throws Exception {
         action = mvc.perform(MockMvcRequestBuilders.put(path)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("X-API-KEY", apiKey)
                 .content("{\"description\":\"This badge has been modified\",\"icon\":\"/images/icon.png\",\"id\": 6,\"name\":\"My amazing badge\"}"));
+    }
+
+    //DELETE
+    @When("the client delete {string} with API-KEY")
+    public void theClientDeleteWithAPIKEY(String path) throws Exception {
+        action = mvc.perform(MockMvcRequestBuilders.delete(path)
+                .header("X-API-KEY", apiKey));
     }
 
     @When("the client delete {string} with wrong API-KEY")
@@ -123,13 +154,13 @@ public class BadgeStepDefinition extends SpringIntegrationTest {
     }
 
 
+    /* Application */
+
     @Given("an application named {string}")
     public void anApplicationNamed(String name) throws Exception {
         action = mvc.perform(post(pathApplication + name));
     }
 
-
-    /* Application */
     @And("^the client receives an API-KEY$")
     public void the_client_receives_API_KEY() throws UnsupportedEncodingException, ParseException {
         result = action.andReturn();
@@ -142,34 +173,6 @@ public class BadgeStepDefinition extends SpringIntegrationTest {
     @When("^the client posts /applications$")
     public void the_client_POST_applications() throws Throwable{
         action = mvc.perform(post(pathApplication + appName));
-    }
-
-    @When("^the client posts /badges$")
-    public void theClientPostsBadges() throws Exception {
-        action = mvc.perform(MockMvcRequestBuilders.post(pathBadges)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("X-API-KEY", apiKey)
-                .content("{\"description\":\"You can get this badge after 50 comments\",\"icon\":\"/images/icon.png\",\"id\": 6,\"name\":\"My amazing badge\"}"));
-    }
-
-    @When("^the client posts /badges (\\d+) times$")
-    public void theClientPostsBadgesMultipleTimes(int nbRequests) throws Exception {
-
-        for(int i = 0; i < nbRequests; ++i) {
-            StringBuilder sb = new StringBuilder("{\"description\":\"You can get this badge after ")
-                            .append(5 * (i + 1))
-                            .append(" comments\",\"icon\":\"/images/icon.png\",\"id\":")
-                            .append(i + 1)
-                            .append(",\"name\":\"My amazing badge ")
-                            .append(i + 1)
-                            .append("\"}");
-
-            action = mvc.perform(MockMvcRequestBuilders.post(pathBadges)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .header("X-API-KEY", apiKey)
-                    .content(sb.toString()))
-                    .andExpect(status().is(201));
-        }
     }
 
 }

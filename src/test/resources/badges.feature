@@ -50,7 +50,8 @@ Feature: Badges can be retrieved
     Then the client receives status code of 200
     When the client get "/badges/6" with API-KEY
     Then the client has updated a badge
-    
+
+    #TODO Check when merged with master if it works
     When the client delete "/badges/6" with API-KEY
     Then the client receives status code of 204
     #And the client get "/badges/6" with API-KEY
