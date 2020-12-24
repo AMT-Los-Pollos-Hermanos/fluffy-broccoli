@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 class UserController {
@@ -22,5 +23,5 @@ class UserController {
 
     @ApiOperation("Get only one user")
     @GetMapping(value = "users/{id}", produces = "application/json")
-    UserDTO one(@PathVariable Long id) { return service.one(id); }
+    UserDTO one(@PathVariable UUID id) { return service.one(id); }
 }

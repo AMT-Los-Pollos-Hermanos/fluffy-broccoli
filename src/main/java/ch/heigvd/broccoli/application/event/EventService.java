@@ -2,7 +2,8 @@ package ch.heigvd.broccoli.application.event;
 
 import ch.heigvd.broccoli.application.award.AwardService;
 import ch.heigvd.broccoli.domain.application.Application;
-import ch.heigvd.broccoli.domain.award.Award;
+import ch.heigvd.broccoli.domain.award.AwardBadge;
+import ch.heigvd.broccoli.domain.award.AwardPoint;
 import ch.heigvd.broccoli.domain.rule.Rule;
 import ch.heigvd.broccoli.domain.rule.RuleRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,8 +44,13 @@ public class EventService {
                 }
                 // Then, give award
                 if (isPropertiesMatching) {
-                    for (Award award : r.getRuleThen().getAwards()) {
-                        service.apply(award, event.getUserId());
+                    AwardBadge awardBadge = r.getRuleThen().getAwardBadge();
+                    if(awardBadge != null) {
+                        service.apply(awardBadge, event.getUserId());
+                    }
+                    AwardPoint awardPoint = r.getRuleThen().getAwardPoints();
+                    if(awardPoint != null) {
+                        service.apply(awardPoint, event.getUserId());
                     }
                 }
             }

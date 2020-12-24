@@ -1,21 +1,20 @@
 package ch.heigvd.broccoli.application.user;
 
+import ch.heigvd.broccoli.application.badge.BadgeDTO;
 import lombok.Builder;
 import lombok.Data;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import java.util.List;
+import java.util.UUID;
 
 @Data
 @Builder
 public class UserDTO {
-    @Id
-    @GeneratedValue
-    private long id;
 
-    private String firstname;
+    private UUID id;
 
-    private String lastname;
+    private Double points;
 
-    private String username;
+    private List<BadgeDTO> badges;
+
 }

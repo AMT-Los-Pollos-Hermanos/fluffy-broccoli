@@ -1,15 +1,13 @@
 package ch.heigvd.broccoli.application.badge;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
-
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import lombok.Builder;
+import lombok.Data;
 
 @Data
 @Builder
 public class BadgeDTO {
-    @Id @GeneratedValue
+
     @ApiModelProperty(example = "1", position = 1)
     private long id;
 

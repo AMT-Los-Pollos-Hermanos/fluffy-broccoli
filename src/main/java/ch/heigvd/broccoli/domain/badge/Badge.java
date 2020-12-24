@@ -1,13 +1,11 @@
 package ch.heigvd.broccoli.domain.badge;
 
 import ch.heigvd.broccoli.domain.application.Application;
-import ch.heigvd.broccoli.domain.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import ch.heigvd.broccoli.domain.user.UserEntity;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Badge {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String name;
@@ -29,6 +27,8 @@ public class Badge {
     @ManyToOne
     private Application application;
 
-    @ManyToMany
-    private List<User> users;
+    @ManyToMany(mappedBy = "badges")
+    @Builder.Default
+    @ToString.Exclude
+    private List<UserEntity> users = new ArrayList<>();
 }

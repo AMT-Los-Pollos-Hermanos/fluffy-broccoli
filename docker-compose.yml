@@ -1,0 +1,14 @@
+version: "3.2"
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: broccoli
+      POSTGRES_USER: broccoli
+      POSTGRES_PASSWORD: broccoli
+    ports:
+      - "5432:5432"
+    volumes:
+    - "pg_data:/var/lib/postgresql/data"
+volumes:
+  pg_data:

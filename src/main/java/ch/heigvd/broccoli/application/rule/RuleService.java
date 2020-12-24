@@ -20,7 +20,7 @@ public class RuleService extends BaseService<RuleDTO, Rule> {
     }
 
 
-
+    @Override
     public RuleDTO add(RuleDTO ruleDTO) {
         return toDTO(repository.save(Rule.builder()
                 .ruleIf(ruleDTO.getRuleIf())
@@ -28,6 +28,7 @@ public class RuleService extends BaseService<RuleDTO, Rule> {
                 .application(app()).build()));
     }
 
+    @Override
     public RuleDTO update(Long id, RuleDTO ruleDTO) {
         repository.findByIdAndApplication(id, app()).map(rule -> {
             rule.setRuleIf(ruleDTO.getRuleIf());
@@ -39,7 +40,7 @@ public class RuleService extends BaseService<RuleDTO, Rule> {
         return ruleDTO;
     }
 
-
+    @Override
     public RuleDTO toDTO(Rule rule) {
         return RuleDTO.builder()
                 .id(rule.getId())

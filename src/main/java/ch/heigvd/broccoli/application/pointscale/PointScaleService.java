@@ -2,10 +2,13 @@ package ch.heigvd.broccoli.application.pointscale;
 
 import ch.heigvd.broccoli.application.BaseService;
 import ch.heigvd.broccoli.domain.pointscale.PointScale;
+import ch.heigvd.broccoli.domain.pointscale.PointScaleRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PointScaleService extends BaseService<PointScaleDTO, PointScale> {
+
+    PointScaleService(PointScaleRepository repository) { this.repository = repository; }
 
     @Override
     public PointScaleDTO add(PointScaleDTO entity) {
