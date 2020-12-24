@@ -1,17 +1,15 @@
 Feature: Badges can be retrieved
 
-
-  Scenario: the client makes call to GET /badges with existing application and no posted badge
+  Background:
     Given an application named "test"
     And the client receives an API-KEY
+
+  Scenario: the client makes call to GET /badges with existing application and no posted badge
     When the client get "/badges" with API-KEY
     Then the client receives status code of 200
     And the client receives an empty array of badges
 
-
   Scenario: the client makes call to GET /badges with existing application
-    Given an application named "test"
-    And the client receives an API-KEY
     When the client posts /badges 5 times
     Then the client receives status code of 201
     When the client get "/badges" with API-KEY
@@ -19,8 +17,6 @@ Feature: Badges can be retrieved
     And the client receives status code of 200
 
   Scenario: the client makes call to GET /badges/6, PUT /badges/6 and DELETE /badges/6 with existing application
-    Given an application named "test"
-    And the client receives an API-KEY
     When the client posts "/badges"
     Then the client receives status code of 201
     When the client get "/badges/6" with API-KEY
