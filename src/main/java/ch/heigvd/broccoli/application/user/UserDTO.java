@@ -1,6 +1,7 @@
 package ch.heigvd.broccoli.application.user;
 
 import ch.heigvd.broccoli.application.badge.BadgeDTO;
+import ch.heigvd.broccoli.application.userreceivepoint.UserReceivePointDTO;
 import lombok.Builder;
 import lombok.Data;
 
@@ -16,5 +17,7 @@ public class UserDTO {
     private Double points;
 
     private List<BadgeDTO> badges;
+
+    private List<UserReceivePointDTO> userReceivePointDTOs;
 
 }

@@ -6,9 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.util.Date;
 
 @Entity
@@ -28,11 +28,10 @@ public class UserReceivePoint {
     @ManyToOne
     private PointScale pointScale;
 
-    private double points;
+    private Integer points;
 
-    @Column(insertable = false, updatable = false)
+    @Builder.Default
     @Temporal(TemporalType.TIMESTAMP)
-    @CreationTimestamp
-    private Date timestamp;
+    private Date timestamp = Date.from(Instant.now());
 
 }

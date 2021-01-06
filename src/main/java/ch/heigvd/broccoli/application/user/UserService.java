@@ -2,6 +2,8 @@ package ch.heigvd.broccoli.application.user;
 
 import ch.heigvd.broccoli.application.badge.BadgeService;
 import ch.heigvd.broccoli.application.leaderboard.LeaderboardService;
+import ch.heigvd.broccoli.application.pointscale.PointScaleService;
+import ch.heigvd.broccoli.application.userreceivepoint.UserReceivePointDTO;
 import ch.heigvd.broccoli.domain.application.Application;
 import ch.heigvd.broccoli.domain.user.UserEntity;
 import ch.heigvd.broccoli.domain.user.UserRepository;
@@ -19,11 +21,13 @@ public class UserService{
     private final UserRepository repository;
     private final LeaderboardService leaderboardService;
     private final BadgeService badgeService;
+    private final PointScaleService pointScaleService;
 
-    public UserService(UserRepository repository, LeaderboardService leaderboardService, BadgeService badgeService) {
+    public UserService(UserRepository repository, LeaderboardService leaderboardService, BadgeService badgeService, PointScaleService pointScaleService) {
         this.repository = repository;
         this.leaderboardService = leaderboardService;
         this.badgeService = badgeService;
+        this.pointScaleService = pointScaleService;
     }
 
     public List<UserDTO> all() { return toDTO(repository.findAllByApplication(app())); }
@@ -39,6 +43,13 @@ public class UserService{
                 .id(userEntity.getId())
                 .badges(userEntity.getBadges().stream().map(badgeService::toDTO).collect(Collectors.toList()))
                 .points(leaderboardService.getPointsUser(userEntity))
+                .userReceivePointDTOs(userEntity.getUserReceivePoints().stream().map(
+                        userReceivePoint -> UserReceivePointDTO.builder()
+                                .pointScale(pointScaleService.toDTO(userReceivePoint.getPointScale()))
+                                .points(userReceivePoint.getPoints())
+                                .timestamp(userReceivePoint.getTimestamp())
+                                .build()).collect(Collectors.toList())
+                )
                 .build();
     }
 
