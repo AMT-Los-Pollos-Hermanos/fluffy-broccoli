@@ -14,7 +14,7 @@ public class UserDTO {
 
     private UUID id;
 
-    private Double points;
+    private Integer points;
 
     private List<BadgeDTO> badges;
 

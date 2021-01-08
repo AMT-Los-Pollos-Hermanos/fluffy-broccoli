@@ -9,5 +9,5 @@ import java.util.UUID;
 @Data
 @Builder
 public class LeaderboardDTO {
-    Map<UUID, Double> leaderboard;
+    Map<UUID, Integer> leaderboard;
 }
