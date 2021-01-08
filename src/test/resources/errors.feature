@@ -43,4 +43,18 @@ Feature: Actions that imply errors
     When the client put "/badges/1" with wrong API-KEY
     Then the client receives status code of 403
 
+  Scenario: the client can't GET /rules with no application
+    When the client get "/rules"
+    Then the client receives status code of 403
 
+  Scenario: the client can't GET /rules/1 with no application
+    When the client get "/rules/1"
+    Then the client receives status code of 403
+
+  Scenario: the client can't DELETE /rules/1 with no application
+    When the client delete "/rules/1"
+    Then the client receives status code of 403
+
+  Scenario: the client can't PUT /rules/1 with no application
+    When the client put "/rules/1"
+    Then the client receives status code of 403
