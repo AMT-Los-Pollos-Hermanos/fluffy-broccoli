@@ -1,6 +1,7 @@
 package ch.heigvd.broccoli.application.leaderboard;
 
 import ch.heigvd.broccoli.application.user.UserDTO;
+import ch.heigvd.broccoli.domain.user.PagingSortingUserRepository;
 import ch.heigvd.broccoli.domain.user.UserEntity;
 import ch.heigvd.broccoli.domain.user.UserRepository;
 import ch.heigvd.broccoli.domain.userreceivepoint.UserReceivePoint;
@@ -14,13 +15,16 @@ public class LeaderboardService {
 
     private final UserReceivePointRepository userReceivePointRepository;
     private final UserRepository userRepository;
+    private final PagingSortingUserRepository pagingSortingUserRepository;
 
-    public LeaderboardService(UserReceivePointRepository userReceivePointRepository, UserRepository userRepository) {
+    public LeaderboardService(UserReceivePointRepository userReceivePointRepository, UserRepository userRepository, PagingSortingUserRepository pagingSortingUserRepository) {
         this.userReceivePointRepository = userReceivePointRepository;
         this.userRepository = userRepository;
+        this.pagingSortingUserRepository = pagingSortingUserRepository;
     }
 
-    public LeaderboardDTO get(int nbUsers) {
+    public LeaderboardDTO get(int nbUsers, int page) {
+//        Pageable sortedByPoints = PageRequest.of(page, nbUsersm )
         List<UserEntity> userEntities = userRepository.findAll();
         Map<Double, UserDTO> rankingUsers = new TreeMap<>(Collections.reverseOrder());
         Map<UUID, Double> nRankingUsers = new LinkedHashMap<>();

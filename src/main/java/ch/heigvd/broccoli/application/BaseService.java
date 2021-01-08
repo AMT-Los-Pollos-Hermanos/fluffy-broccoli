@@ -28,7 +28,7 @@ public abstract class BaseService<D, E> implements ServiceInterface<D, E> {
         return toDTO(repository.findByIdAndApplication(id, app()).map(entity -> {
             repository.delete(entity);
             return entity;
-        }).orElseThrow(() -> new RuntimeException("Not found")));
+        }).orElseThrow(() -> new NotFoundException("Not found")));
     }
 
     @Override
@@ -38,7 +38,7 @@ public abstract class BaseService<D, E> implements ServiceInterface<D, E> {
 
     @Override
     public D toDTO(Optional<E> entity) {
-        return entity.map(this::toDTO).orElse(null);
+        return entity.map(this::toDTO).orElseThrow(() -> new NotFoundException("Not found"));
     }
 
     @Override

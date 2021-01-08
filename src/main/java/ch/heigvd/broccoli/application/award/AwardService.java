@@ -1,5 +1,6 @@
 package ch.heigvd.broccoli.application.award;
 
+import ch.heigvd.broccoli.application.NotFoundException;
 import ch.heigvd.broccoli.domain.application.Application;
 import ch.heigvd.broccoli.domain.award.AwardBadge;
 import ch.heigvd.broccoli.domain.award.AwardPoint;
@@ -59,7 +60,7 @@ public class AwardService {
                 userEntity.getBadges().add(badge);
                 userRepository.save(userEntity);
                 return badge;
-            }).orElseThrow(() -> new RuntimeException("Badge '" + award.getBadgeId() + "' in event not found"));
+            }).orElseThrow(() -> new NotFoundException("Badge '" + award.getBadgeId() + "' in event not found"));
         }
     }
 
@@ -86,7 +87,7 @@ public class AwardService {
                     .points(award.getAmount())
                     .build());
             return pointScale;
-        }).orElseThrow(() -> new RuntimeException("Point scale not found"));
+        }).orElseThrow(() -> new NotFoundException("Point scale not found"));
     }
 
     public Application app() {

@@ -26,5 +26,7 @@ public class LeaderboardController {
 
     @ApiOperation("Get leaderboard")
     @GetMapping(value = "leaderboard", produces = "application/json")
-    LeaderboardDTO get(@RequestParam int nbUsers) { return service.get(nbUsers); }
+    LeaderboardDTO get(@RequestParam int nbUsers, @RequestParam int page) {
+        return service.get(nbUsers, page);
+    }
 }

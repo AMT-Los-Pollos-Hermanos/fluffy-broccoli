@@ -1,6 +1,7 @@
 package ch.heigvd.broccoli.application.badge;
 
 import ch.heigvd.broccoli.application.BaseService;
+import ch.heigvd.broccoli.application.NotFoundException;
 import ch.heigvd.broccoli.domain.badge.Badge;
 import ch.heigvd.broccoli.domain.badge.BadgeRepository;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,6 @@ public class BadgeService extends BaseService<BadgeDTO, Badge> {
     BadgeService(BadgeRepository repository) {
         this.repository = repository;
     }
-
 
     @Override
     public BadgeDTO add(BadgeDTO badgeDTO) {
@@ -30,7 +30,7 @@ public class BadgeService extends BaseService<BadgeDTO, Badge> {
             badge.setDescription(badgeDTO.getDescription());
             badge.setIcon(badgeDTO.getIcon());
             return repository.save(badge);
-        }).orElseThrow(() -> new BadgeNotFoundException(id)));
+        }).orElseThrow(() -> new NotFoundException("Badge " + id + " not found")));
     }
 
     @Override

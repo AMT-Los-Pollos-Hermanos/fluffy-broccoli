@@ -23,7 +23,7 @@ public class UserEntity {
     @ManyToOne
     private Application application;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = CascadeType.REMOVE)
     @Builder.Default
     @ToString.Exclude
     private List<Badge> badges = new ArrayList<>();
