@@ -1,5 +1,6 @@
 package ch.heigvd.broccoli;
 
+import ch.heigvd.broccoli.application.pointscale.PointScaleDTO;
 import ch.heigvd.broccoli.application.rule.RuleDTO;
 import ch.heigvd.broccoli.domain.award.AwardBadge;
 import ch.heigvd.broccoli.domain.award.AwardPoint;
@@ -48,6 +49,7 @@ public class StepDefinitions {
     String pathBadges = "/badges";
     String pathApplication = "/applications?name=";
     String pathRules = "/rules";
+    String pathPointScales = "/pointscales";
     String appName = "test";
     String apiKey = "";
     String lastPayload = "";
@@ -151,8 +153,8 @@ public class StepDefinitions {
         action.andExpect(content().string("{\"id\":6,\"name\":\"My amazing badge\",\"description\":\"You can get this badge after 50 comments\",\"icon\":\"/images/icon.png\"}"));
     }
 
-    @And("^the client receives an empty array of badges$")
-    public void TheClientReceivesAnEmptyArrayOfBadges() throws Throwable {
+    @And("^the client receives an empty array$")
+    public void TheClientReceivesAnEmptyArray() throws Throwable {
         action.andExpect(content().string("[]"));
     }
 
@@ -282,11 +284,22 @@ public class StepDefinitions {
     }
 
     @Then("^the client receives the correct payload$")
-    public void theClientReceivesARule() throws Throwable {
+    public void theClientReceivestheCorrectPayload() throws Throwable {
         action.andExpect(content().string(lastPayload));
     }
 
-
+    /*PointScale*/
+    @Then("^the client posts a point scale$")
+    public void theClientPostsAPointScale() throws Throwable {
+        lastPayload = mapper.writeValueAsString(PointScaleDTO.builder()
+                .id(1L)
+                .name("PointScale1")
+                .build());
+        action = mvc.perform(MockMvcRequestBuilders.post(pathPointScales)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("X-API-KEY", apiKey)
+                .content(lastPayload));
+    }
 
 }
 

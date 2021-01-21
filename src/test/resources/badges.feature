@@ -7,7 +7,7 @@ Feature: Badges can be retrieved
   Scenario: the client makes call to GET /badges with existing application and no posted badge
     When the client get "/badges" with API-KEY
     Then the client receives status code of 200
-    And the client receives an empty array of badges
+    And the client receives an empty array
 
   Scenario: the client makes call to GET /badges with existing application
     When the client posts /badges 5 times

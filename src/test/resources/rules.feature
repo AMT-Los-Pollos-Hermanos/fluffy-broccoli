@@ -18,7 +18,7 @@ Feature: Rules can be retrieved
     Then the client receives status code of 200
     And the client receives the correct payload
 
-  Scenario: the client a scale rule
+  Scenario: the client creates a scale rule
     When the client posts a scale rule
     Then the client receives status code of 200
     When the client get "/rules/3" with API-KEY
