@@ -10,7 +10,7 @@ Feature: Point Scales can be retrieved
     And the client receives an empty array
 
   Scenario: the client creates a point scale
-    When the client posts a point scale
+    When the client posts a point scale called "PointScale1"
     Then the client receives status code of 201
     And the client receives the correct payload
 

@@ -17,7 +17,7 @@ Feature: Badges can be retrieved
     And the client receives status code of 200
 
   Scenario: the client makes call to GET /badges/6, PUT /badges/6 and DELETE /badges/6 with existing application
-    When the client posts "/badges"
+    When the client posts /badges
     Then the client receives status code of 201
     When the client get "/badges/6" with API-KEY
     Then the client receives a badge
