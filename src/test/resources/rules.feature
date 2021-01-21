@@ -3,14 +3,24 @@ Feature: Rules can be retrieved
   Background:
     Given an application named "test"
     And the client receives an API-KEY
-    And the client posts /badges 5 times
 
-
-  Scenario: the client creates a rule
-    When the client posts /rules
+  Scenario: the client creates a badge-scale rule
+    When the client posts a badge-scale rule
     Then the client receives status code of 200
-    When the client get "/rules" with API-KEY
+    When the client get "/rules/1" with API-KEY
     Then the client receives status code of 200
-    # Need to be changed or generalised
-    And the client receives an empty array of badges
+    And the client receives the correct payload
 
+  Scenario: the client creates a badge rule
+    When the client posts a badge rule
+    Then the client receives status code of 200
+    When the client get "/rules/2" with API-KEY
+    Then the client receives status code of 200
+    And the client receives the correct payload
+
+  Scenario: the client a scale rule
+    When the client posts a scale rule
+    Then the client receives status code of 200
+    When the client get "/rules/3" with API-KEY
+    Then the client receives status code of 200
+    And the client receives the correct payload

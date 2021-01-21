@@ -1,5 +1,11 @@
 package ch.heigvd.broccoli;
 
+import ch.heigvd.broccoli.application.rule.RuleDTO;
+import ch.heigvd.broccoli.domain.award.AwardBadge;
+import ch.heigvd.broccoli.domain.award.AwardPoint;
+import ch.heigvd.broccoli.domain.rule.specification.RuleIf;
+import ch.heigvd.broccoli.domain.rule.specification.RuleThen;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -8,6 +14,7 @@ import io.cucumber.spring.CucumberContextConfiguration;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
+import org.hibernate.boot.jaxb.hbm.spi.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,6 +27,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -39,8 +47,11 @@ public class StepDefinitions {
     ResultActions action;
     String pathBadges = "/badges";
     String pathApplication = "/applications?name=";
+    String pathRules = "/rules";
     String appName = "test";
     String apiKey = "";
+    String lastPayload = "";
+    ObjectMapper mapper = new ObjectMapper();
 
 
     /* Badges */
@@ -136,12 +147,12 @@ public class StepDefinitions {
     }
 
     @Then("^the client receives a badge$")
-    public void theClientReceivesAnArrayOfBadges() throws Throwable {
+    public void theClientReceivesABadge() throws Throwable {
         action.andExpect(content().string("{\"id\":6,\"name\":\"My amazing badge\",\"description\":\"You can get this badge after 50 comments\",\"icon\":\"/images/icon.png\"}"));
     }
 
     @And("^the client receives an empty array of badges$")
-    public void the_client_receives_server_version_body() throws Throwable {
+    public void TheClientReceivesAnEmptyArrayOfBadges() throws Throwable {
         action.andExpect(content().string("[]"));
     }
 
@@ -188,15 +199,94 @@ public class StepDefinitions {
     }
 
     @When("^the client posts /applications$")
-    public void the_client_POST_applications() throws Throwable{
+    public void TheClientPostsAnApplication() throws Throwable{
         action = mvc.perform(post(pathApplication + appName));
     }
 
     // Rules
-    @When("^the client posts /rules$")
-    public void the_client_POST_rules() throws Throwable{
-        action = mvc.perform(post(pathApplication + appName));
+    @When("^the client posts a badge-scale rule$")
+    public void TheClientPostsABadgeScaleRule() throws Throwable{
+        lastPayload = mapper.writeValueAsString(RuleDTO.builder()
+                .id(1L)
+                .ruleIf(RuleIf.builder()
+                        .type("string")
+                        .properties(new HashMap<>(){{
+                            put("additionalProp1", "string");
+                            put("additionalProp2", "string");
+                        }})
+                        .build())
+                .ruleThen(RuleThen.builder()
+                        .awardPoints(AwardPoint.builder()
+                                .amount(0)
+                                .pointScale(0L)
+                                .build())
+                        .awardBadge(AwardBadge.builder()
+                                .badgeId(0L)
+                                .build())
+                        .build())
+                .build());
+
+        action = mvc.perform(MockMvcRequestBuilders.post(pathRules)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("X-API-KEY", apiKey)
+                .content(lastPayload));
     }
+
+    @When("^the client posts a badge rule$")
+    public void TheClientPostsABadgeRule() throws Throwable{
+        lastPayload = mapper.writeValueAsString(RuleDTO.builder()
+                .id(2L)
+                .ruleIf(RuleIf.builder()
+                        .type("string")
+                        .properties(new HashMap<>(){{
+                            put("additionalProp1", "string");
+                            put("additionalProp2", "string");
+                        }})
+                        .build())
+                .ruleThen(RuleThen.builder()
+                        .awardBadge(AwardBadge.builder()
+                                .badgeId(0L)
+                                .build())
+                        .build())
+                .build());
+
+        action = mvc.perform(MockMvcRequestBuilders.post(pathRules)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("X-API-KEY", apiKey)
+                .content(lastPayload));
+    }
+
+    @When("^the client posts a scale rule$")
+    public void TheClientPostsAScaleRule() throws Throwable {
+        lastPayload = mapper.writeValueAsString(RuleDTO.builder()
+                .id(3L)
+                .ruleIf(RuleIf.builder()
+                        .type("string")
+                        .properties(new HashMap<>(){{
+                            put("additionalProp1", "string");
+                            put("additionalProp2", "string");
+                        }})
+                        .build())
+                .ruleThen(RuleThen.builder()
+                        .awardPoints(AwardPoint.builder()
+                                .amount(0)
+                                .pointScale(0L)
+                                .build())
+                        .build())
+                .build());
+
+        action = mvc.perform(MockMvcRequestBuilders.post(pathRules)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("X-API-KEY", apiKey)
+                .content(lastPayload));
+    }
+
+    @Then("^the client receives the correct payload$")
+    public void theClientReceivesARule() throws Throwable {
+        action.andExpect(content().string(lastPayload));
+    }
+
+
 
 }
 
