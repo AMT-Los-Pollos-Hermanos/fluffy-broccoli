@@ -5,13 +5,11 @@ import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.builders.ResponseMessageBuilder;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -35,7 +33,7 @@ public class SwaggerConfiguration {
     ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Fluffy broccoli API")
-                .description("An API to use to gamify everything")
+                .description("An API to gamify everything")
                 .version("0.0.1")
                 .build();
     }
