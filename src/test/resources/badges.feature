@@ -19,16 +19,16 @@ Feature: Badges can be retrieved
   Scenario: the client makes call to GET /badges/6, PUT /badges/6 and DELETE /badges/6 with existing application
     When the client posts /badges
     Then the client receives status code of 201
-    When the client get "/badges/6" with API-KEY
+    When the client get "/badges/1" with API-KEY
     Then the client receives a badge
     And the client receives status code of 200
     
-    When the client put "/badges/6" with API-KEY
+    When the client put "/badges/1" with API-KEY
     Then the client receives status code of 200
-    When the client get "/badges/6" with API-KEY
+    When the client get "/badges/1" with API-KEY
     Then the client has updated a badge
     #TODO Check when merged with master if it works
-    When the client delete "/badges/6" with API-KEY
+    When the client delete "/badges/1" with API-KEY
     Then the client receives status code of 204
     #And the client get "/badges/6" with API-KEY
     #Then the client receives status code of 404

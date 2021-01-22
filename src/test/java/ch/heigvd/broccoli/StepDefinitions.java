@@ -16,9 +16,7 @@ import io.cucumber.spring.CucumberContextConfiguration;
 import net.minidev.json.JSONObject;
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
-import org.hibernate.boot.jaxb.hbm.spi.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -41,6 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(properties = {"spring.datasource.url=jdbc:h2:mem:db"})
 @AutoConfigureMockMvc
 @CucumberContextConfiguration
+@DirtiesContext
 public class StepDefinitions {
 
     @Autowired
@@ -117,7 +116,7 @@ public class StepDefinitions {
         action = mvc.perform(MockMvcRequestBuilders.put(path)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("X-API-KEY", apiKey)
-                .content("{\"description\":\"This badge has been modified\",\"icon\":\"/images/icon.png\",\"id\": 6,\"name\":\"My amazing badge\"}"));
+                .content("{\"description\":\"This badge has been modified\",\"icon\":\"/images/icon.png\",\"id\": 1,\"name\":\"My amazing badge\"}"));
     }
 
     @When("the client put {string} with wrong API-KEY")
@@ -154,7 +153,7 @@ public class StepDefinitions {
 
     @Then("^the client receives a badge$")
     public void theClientReceivesABadge() throws Throwable {
-        action.andExpect(content().string("{\"id\":6,\"name\":\"My amazing badge\",\"description\":\"You can get this badge after 50 comments\",\"icon\":\"/images/icon.png\"}"));
+        action.andExpect(content().string("{\"id\":1,\"name\":\"My amazing badge\",\"description\":\"You can get this badge after 50 comments\",\"icon\":\"/images/icon.png\"}"));
     }
 
     @And("^the client receives an empty array$")
@@ -184,7 +183,7 @@ public class StepDefinitions {
 
     @Then("^the client has updated a badge$")
     public void theClientHasUpdatedABadge() throws Exception {
-        action.andExpect(content().string("{\"id\":6,\"name\":\"My amazing badge\",\"description\":\"This badge has been modified\",\"icon\":\"/images/icon.png\"}"));
+        action.andExpect(content().string("{\"id\":1,\"name\":\"My amazing badge\",\"description\":\"This badge has been modified\",\"icon\":\"/images/icon.png\"}"));
     }
 
 
@@ -241,7 +240,7 @@ public class StepDefinitions {
     @When("^the client posts a badge rule$")
     public void TheClientPostsABadgeRule() throws Throwable{
         lastPayload = mapper.writeValueAsString(RuleDTO.builder()
-                .id(2L)
+                .id(1L)
                 .ruleIf(RuleIf.builder()
                         .type("string")
                         .properties(new HashMap<>(){{
@@ -265,7 +264,7 @@ public class StepDefinitions {
     @When("^the client posts a scale rule$")
     public void TheClientPostsAScaleRule() throws Throwable {
         lastPayload = mapper.writeValueAsString(RuleDTO.builder()
-                .id(3L)
+                .id(1L)
                 .ruleIf(RuleIf.builder()
                         .type("string")
                         .properties(new HashMap<>(){{

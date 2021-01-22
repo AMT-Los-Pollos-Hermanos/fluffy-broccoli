@@ -14,13 +14,13 @@ Feature: Rules can be retrieved
   Scenario: the client creates a badge rule
     When the client posts a badge rule
     Then the client receives status code of 200
-    When the client get "/rules/2" with API-KEY
+    When the client get "/rules/1" with API-KEY
     Then the client receives status code of 200
     And the client receives the correct payload
 
   Scenario: the client creates a scale rule
     When the client posts a scale rule
     Then the client receives status code of 200
-    When the client get "/rules/3" with API-KEY
+    When the client get "/rules/1" with API-KEY
     Then the client receives status code of 200
     And the client receives the correct payload
