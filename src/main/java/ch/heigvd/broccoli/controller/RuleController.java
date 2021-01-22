@@ -2,6 +2,7 @@ package ch.heigvd.broccoli.controller;
 
 import ch.heigvd.broccoli.application.rule.RuleDTO;
 import ch.heigvd.broccoli.application.rule.RuleService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class RuleController {
     }
 
     @PostMapping("/rules")
+    @ResponseStatus(HttpStatus.CREATED)
     public RuleDTO add(@RequestBody RuleDTO rule) {
         return service.add(rule);
     }
@@ -36,6 +38,7 @@ public class RuleController {
     }
 
     @DeleteMapping("/rules/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public RuleDTO update(@PathVariable Long id) {
         return service.delete(id);
     }

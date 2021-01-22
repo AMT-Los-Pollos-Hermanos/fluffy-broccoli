@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.logging.Logger;
+
 @RestController
 public class EventController {
 
@@ -17,6 +19,7 @@ public class EventController {
 
     @PostMapping("/events")
     void postEvent(@RequestBody EventDTO event) {
+        Logger.getLogger("Event").info(event.toString());
         service.process(event);
     }
 

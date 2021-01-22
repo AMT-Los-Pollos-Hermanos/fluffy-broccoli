@@ -1,5 +1,11 @@
 package ch.heigvd.broccoli;
 
+import ch.heigvd.broccoli.application.pointscale.PointScaleDTO;
+import ch.heigvd.broccoli.application.rule.RuleDTO;
+import ch.heigvd.broccoli.domain.award.AwardPoint;
+import ch.heigvd.broccoli.domain.rule.specification.RuleIf;
+import ch.heigvd.broccoli.domain.rule.specification.RuleThen;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -12,12 +18,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -26,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(properties = {"spring.datasource.url=jdbc:h2:mem:db"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 @CucumberContextConfiguration
 public class StepDefinitions {
@@ -35,6 +44,7 @@ public class StepDefinitions {
 
     MvcResult result;
     ResultActions action;
+    ObjectMapper mapper = new ObjectMapper();
     String pathBadges = "/badges";
     String pathApplication = "/applications?name=";
     String appName = "test";
@@ -45,7 +55,7 @@ public class StepDefinitions {
     //GET
     @When("the client get {string}")
     public void theClientGet(String path) throws Exception {
-        action = mvc.perform(get(path+appName));
+        action = mvc.perform(get(path + appName));
     }
 
     @When("the client get {string} with API-KEY")
@@ -70,7 +80,7 @@ public class StepDefinitions {
     @When("^the client posts /badges (\\d+) times$")
     public void theClientPostsBadgesMultipleTimes(int nbRequests) throws Exception {
 
-        for(int i = 0; i < nbRequests; ++i) {
+        for (int i = 0; i < nbRequests; ++i) {
             StringBuilder sb = new StringBuilder("{\"description\":\"You can get this badge after ")
                     .append(5 * (i + 1))
                     .append(" comments\",\"icon\":\"/images/icon.png\",\"id\":")
@@ -90,7 +100,7 @@ public class StepDefinitions {
     //PUT
     @When("the client put {string}")
     public void theClientPut(String path) throws Exception {
-        action = mvc.perform(MockMvcRequestBuilders.put(path+appName));
+        action = mvc.perform(MockMvcRequestBuilders.put(path + appName));
     }
 
     @When("the client put {string} with API-KEY")
@@ -112,7 +122,7 @@ public class StepDefinitions {
     //DELETE
     @When("the client delete {string}")
     public void theClientDelete(String path) throws Exception {
-        action = mvc.perform(MockMvcRequestBuilders.delete(path+appName));
+        action = mvc.perform(MockMvcRequestBuilders.delete(path + appName));
     }
 
     @When("the client delete {string} with API-KEY")
@@ -146,7 +156,7 @@ public class StepDefinitions {
     @And("^the client receives an array of (\\d+) badges$")
     public void theClientReceivesAnEmptyArrayOfBadges(int nbBadges) throws Throwable {
         StringBuilder sb = new StringBuilder("[");
-        for(int i = 0; i < nbBadges; ++i) {
+        for (int i = 0; i < nbBadges; ++i) {
             sb.append("{\"id\":")
                     .append(i + 1)
                     .append(",\"name\":\"My amazing badge ")
@@ -155,9 +165,9 @@ public class StepDefinitions {
                     .append(5 * (i + 1))
                     .append(" comments\",\"icon\":\"/images/icon.png\"}");
 
-                    if(i < nbBadges - 1) {
-                        sb.append(",");
-                    }
+            if (i < nbBadges - 1) {
+                sb.append(",");
+            }
         }
         sb.append("]");
         action.andExpect(content().string(sb.toString()));
@@ -167,7 +177,6 @@ public class StepDefinitions {
     public void theClientHasUpdatedABadge() throws Exception {
         action.andExpect(content().string("{\"id\":6,\"name\":\"My amazing badge\",\"description\":\"This badge has been modified\",\"icon\":\"/images/icon.png\"}"));
     }
-
 
     /* Application */
 
@@ -186,9 +195,40 @@ public class StepDefinitions {
     }
 
     @When("^the client posts /applications$")
-    public void the_client_POST_applications() throws Throwable{
+    public void the_client_POST_applications() throws Throwable {
         action = mvc.perform(post(pathApplication + appName));
     }
 
-}
+    @Given("{int} users")
+    public void users(int nbUsers) throws Exception {
+        action = mvc.perform(post("/pointscales")
+                .header("X-API-KEY", apiKey)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(PointScaleDTO.builder()
+                        .name("My testing pointscale")
+                        .build())));
+        action.andExpect(status().is(201));
 
+        action = mvc.perform(post("/rules")
+                .header("X-API-KEY", apiKey)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(RuleDTO.builder()
+                        .ruleIf(RuleIf.builder()
+                                .type("demo")
+                                .properties(new HashMap<>() {{
+                                    put("data1", "value1");
+                                    put("data2", "value2");
+                                }})
+                                .build())
+                        .ruleThen(RuleThen.builder()
+                                .awardPoints(AwardPoint.builder()
+                                        .pointScale(1L)
+                                        .amount(10)
+                                        .build())
+                                .build())
+                        .build())));
+
+        action.andExpect(status().is(201));
+    }
+
+}

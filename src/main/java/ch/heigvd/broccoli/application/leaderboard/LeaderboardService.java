@@ -5,9 +5,6 @@ import ch.heigvd.broccoli.domain.user.UserEntity;
 import ch.heigvd.broccoli.domain.user.UserRepository;
 import ch.heigvd.broccoli.domain.userreceivepoint.UserReceivePoint;
 import ch.heigvd.broccoli.domain.userreceivepoint.UserReceivePointRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -24,10 +21,9 @@ public class LeaderboardService {
     }
 
     public LeaderboardDTO get(int nbUsers, int page) {
-        Pageable sortedByPoints = PageRequest.of(page, nbUsers);
-        Page<UserEntity> userEntities = userRepository.findAll(sortedByPoints);
-        Map<Integer, UserDTO> rankingUsers = new TreeMap<>(Collections.reverseOrder());
-        Map<UUID, Integer> nRankingUsers = new LinkedHashMap<>();
+        List<UserEntity> userEntities = userRepository.findAll();
+        SortedMap<Integer, UserDTO> rankingUsers = new TreeMap<>(Collections.reverseOrder());
+        ArrayList<UserDTO> sortedUsers = new ArrayList<>();
 
         // count points for each users
         for (UserEntity userEntity : userEntities) {
@@ -37,14 +33,19 @@ public class LeaderboardService {
 
         // select n first users for the leaderboard
         int count = 0;
+        int added = 0;
         for (Map.Entry<Integer, UserDTO> entry : rankingUsers.entrySet()) {
-            if (count >= nbUsers) break;
+            if (added >= nbUsers) break;
 
-            nRankingUsers.put(entry.getValue().getId(), entry.getKey());
+            if(count >= nbUsers * page) {
+                sortedUsers.add(entry.getValue());
+                added++;
+            }
+
             count++;
         }
 
-        return LeaderboardDTO.builder().leaderboard(nRankingUsers).build();
+        return LeaderboardDTO.builder().leaderboard(sortedUsers).build();
     }
 
     public Integer getPointsUser(UserEntity userEntity) {
@@ -62,6 +63,7 @@ public class LeaderboardService {
     public UserDTO toDTO(UserEntity userEntity) {
         return UserDTO.builder()
                 .id(userEntity.getId())
+                .points(getPointsUser(userEntity))
                 .build();
     }
 

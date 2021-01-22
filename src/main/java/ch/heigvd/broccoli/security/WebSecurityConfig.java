@@ -30,6 +30,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             return authentication;
         });
 
+        http.cors();
+
         http
                 .csrf().disable()
                 .sessionManagement()
@@ -38,6 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(filter)
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/applications", "/events").permitAll()
+//                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers("/swagger-ui/**", "/v2/**", "/swagger-resources/**").permitAll()
                 .anyRequest().authenticated();
     }
