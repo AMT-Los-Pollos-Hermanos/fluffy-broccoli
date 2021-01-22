@@ -1,7 +1,9 @@
 package ch.heigvd.broccoli;
 
+import ch.heigvd.broccoli.application.event.EventDTO;
 import ch.heigvd.broccoli.application.pointscale.PointScaleDTO;
 import ch.heigvd.broccoli.application.rule.RuleDTO;
+import ch.heigvd.broccoli.domain.award.AwardBadge;
 import ch.heigvd.broccoli.domain.award.AwardPoint;
 import ch.heigvd.broccoli.domain.rule.specification.RuleIf;
 import ch.heigvd.broccoli.domain.rule.specification.RuleThen;
@@ -26,6 +28,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -34,9 +37,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(properties = {"spring.datasource.url=jdbc:h2:mem:db"})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
 @CucumberContextConfiguration
+@DirtiesContext
 public class StepDefinitions {
 
     @Autowired
@@ -47,8 +50,13 @@ public class StepDefinitions {
     ObjectMapper mapper = new ObjectMapper();
     String pathBadges = "/badges";
     String pathApplication = "/applications?name=";
+    String pathRules = "/rules";
+    String pathPointScales = "/pointscales";
+    String pathEvents = "/events";
     String appName = "test";
     String apiKey = "";
+    String lastPayload = "";
+    UUID userId = UUID.randomUUID();
 
 
     /* Badges */
@@ -69,9 +77,9 @@ public class StepDefinitions {
     }
 
     //POST
-    @When("the client posts {string}")
-    public void theClientPostsBadges(String path) throws Exception {
-        action = mvc.perform(MockMvcRequestBuilders.post(path)
+    @When("^the client posts /badges$")
+    public void theClientPostsBadges() throws Exception {
+        action = mvc.perform(MockMvcRequestBuilders.post(pathBadges)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("X-API-KEY", apiKey)
                 .content("{\"description\":\"You can get this badge after 50 comments\",\"icon\":\"/images/icon.png\",\"id\": 6,\"name\":\"My amazing badge\"}"));
@@ -108,7 +116,7 @@ public class StepDefinitions {
         action = mvc.perform(MockMvcRequestBuilders.put(path)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("X-API-KEY", apiKey)
-                .content("{\"description\":\"This badge has been modified\",\"icon\":\"/images/icon.png\",\"id\": 6,\"name\":\"My amazing badge\"}"));
+                .content("{\"description\":\"This badge has been modified\",\"icon\":\"/images/icon.png\",\"id\": 1,\"name\":\"My amazing badge\"}"));
     }
 
     @When("the client put {string} with wrong API-KEY")
@@ -144,12 +152,12 @@ public class StepDefinitions {
     }
 
     @Then("^the client receives a badge$")
-    public void theClientReceivesAnArrayOfBadges() throws Throwable {
-        action.andExpect(content().string("{\"id\":6,\"name\":\"My amazing badge\",\"description\":\"You can get this badge after 50 comments\",\"icon\":\"/images/icon.png\"}"));
+    public void theClientReceivesABadge() throws Throwable {
+        action.andExpect(content().string("{\"id\":1,\"name\":\"My amazing badge\",\"description\":\"You can get this badge after 50 comments\",\"icon\":\"/images/icon.png\"}"));
     }
 
-    @And("^the client receives an empty array of badges$")
-    public void the_client_receives_server_version_body() throws Throwable {
+    @And("^the client receives an empty array$")
+    public void TheClientReceivesAnEmptyArray() throws Throwable {
         action.andExpect(content().string("[]"));
     }
 
@@ -175,7 +183,7 @@ public class StepDefinitions {
 
     @Then("^the client has updated a badge$")
     public void theClientHasUpdatedABadge() throws Exception {
-        action.andExpect(content().string("{\"id\":6,\"name\":\"My amazing badge\",\"description\":\"This badge has been modified\",\"icon\":\"/images/icon.png\"}"));
+        action.andExpect(content().string("{\"id\":1,\"name\":\"My amazing badge\",\"description\":\"This badge has been modified\",\"icon\":\"/images/icon.png\"}"));
     }
 
     /* Application */
@@ -195,40 +203,123 @@ public class StepDefinitions {
     }
 
     @When("^the client posts /applications$")
-    public void the_client_POST_applications() throws Throwable {
+    public void TheClientPostsAnApplication() throws Throwable{
         action = mvc.perform(post(pathApplication + appName));
     }
 
-    @Given("{int} users")
-    public void users(int nbUsers) throws Exception {
-        action = mvc.perform(post("/pointscales")
-                .header("X-API-KEY", apiKey)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(PointScaleDTO.builder()
-                        .name("My testing pointscale")
-                        .build())));
-        action.andExpect(status().is(201));
-
-        action = mvc.perform(post("/rules")
-                .header("X-API-KEY", apiKey)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(RuleDTO.builder()
-                        .ruleIf(RuleIf.builder()
-                                .type("demo")
-                                .properties(new HashMap<>() {{
-                                    put("data1", "value1");
-                                    put("data2", "value2");
-                                }})
+    // Rules
+    @When("^the client posts a badge-scale rule$")
+    public void TheClientPostsABadgeScaleRule() throws Throwable{
+        lastPayload = mapper.writeValueAsString(RuleDTO.builder()
+                .id(1L)
+                .ruleIf(RuleIf.builder()
+                        .type("string")
+                        .properties(new HashMap<>(){{
+                            put("additionalProp1", "string");
+                            put("additionalProp2", "string");
+                        }})
+                        .build())
+                .ruleThen(RuleThen.builder()
+                        .awardPoints(AwardPoint.builder()
+                                .amount(0)
+                                .pointScale(1L)
                                 .build())
-                        .ruleThen(RuleThen.builder()
-                                .awardPoints(AwardPoint.builder()
-                                        .pointScale(1L)
-                                        .amount(10)
-                                        .build())
+                        .awardBadge(AwardBadge.builder()
+                                .badgeId(1L)
                                 .build())
-                        .build())));
+                        .build())
+                .build());
 
-        action.andExpect(status().is(201));
+        action = mvc.perform(MockMvcRequestBuilders.post(pathRules)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("X-API-KEY", apiKey)
+                .content(lastPayload));
+    }
+
+    @When("^the client posts a badge rule$")
+    public void TheClientPostsABadgeRule() throws Throwable{
+        lastPayload = mapper.writeValueAsString(RuleDTO.builder()
+                .id(1L)
+                .ruleIf(RuleIf.builder()
+                        .type("string")
+                        .properties(new HashMap<>(){{
+                            put("additionalProp1", "string");
+                            put("additionalProp2", "string");
+                        }})
+                        .build())
+                .ruleThen(RuleThen.builder()
+                        .awardBadge(AwardBadge.builder()
+                                .badgeId(1L)
+                                .build())
+                        .build())
+                .build());
+
+        action = mvc.perform(MockMvcRequestBuilders.post(pathRules)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("X-API-KEY", apiKey)
+                .content(lastPayload));
+    }
+
+    @When("^the client posts a scale rule$")
+    public void TheClientPostsAScaleRule() throws Throwable {
+        lastPayload = mapper.writeValueAsString(RuleDTO.builder()
+                .id(1L)
+                .ruleIf(RuleIf.builder()
+                        .type("string")
+                        .properties(new HashMap<>(){{
+                            put("additionalProp1", "string");
+                            put("additionalProp2", "string");
+                        }})
+                        .build())
+                .ruleThen(RuleThen.builder()
+                        .awardPoints(AwardPoint.builder()
+                                .amount(0)
+                                .pointScale(1L)
+                                .build())
+                        .build())
+                .build());
+
+        action = mvc.perform(MockMvcRequestBuilders.post(pathRules)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("X-API-KEY", apiKey)
+                .content(lastPayload));
+    }
+
+    @Then("^the client receives the correct payload$")
+    public void theClientReceivestheCorrectPayload() throws Throwable {
+        action.andExpect(content().string(lastPayload));
+    }
+
+    /*PointScale*/
+    @Then("the client posts a point scale called {string}")
+    public void theClientPostsAPointScaleCalled(String name) throws Throwable{
+        lastPayload = mapper.writeValueAsString(PointScaleDTO.builder()
+                .id(1L)
+                .name(name)
+                .build());
+        action = mvc.perform(MockMvcRequestBuilders.post(pathPointScales)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("X-API-KEY", apiKey)
+                .content(lastPayload));
+    }
+
+
+    @When("the client posts an event")
+    public void theClientPostsAnEvent() throws Throwable{
+
+        lastPayload = mapper.writeValueAsString(EventDTO.builder()
+                .properties(new HashMap<>(){{
+                    put("additionalProp1", "string");
+                    put("additionalProp2", "string");
+                }})
+                .type("string")
+                .userId(userId)
+                .build());
+        action = mvc.perform(MockMvcRequestBuilders.post(pathEvents)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("X-API-KEY", apiKey)
+                .content(lastPayload));
+
     }
 
 }
